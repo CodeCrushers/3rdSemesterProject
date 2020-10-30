@@ -5,8 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InternalClientSide"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Main Window" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Header" FontSize="24" Grid.Row="0" Grid.ColumnSpan="4" HorizontalAlignment="Center"/>
         
+        <Label Content="ID" FontSize="16" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" />
+        <Label Content="Name" FontSize="16" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" />
+        <Label Content="Serial Number" FontSize="16" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" />
+        <Label Content="Model" FontSize="16" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center" />
+        
+        <Rectangle Fill="Red" Grid.Row="2" Grid.Column="0" />
+        <Rectangle Fill="Pink" Grid.Row="2" Grid.Column="1" />
+        <Rectangle Fill="Cyan" Grid.Row="2" Grid.Column="2" />
+        <Rectangle Fill="LightGreen" Grid.Row="2" Grid.Column="3" />
     </Grid>
 </Window>
