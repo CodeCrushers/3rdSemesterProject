@@ -22,7 +22,7 @@ namespace InternalClientSide {
 
         public MainWindow() {
             InitializeComponent();
-            DataContext = Car.GetCars();
+            carsGrid.DataContext = Car.GetCars();
         }
 
     }

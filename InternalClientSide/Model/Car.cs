@@ -27,8 +27,8 @@ namespace InternalClientSide.Model {
             return car;
         }
 
-        public static List<Car> GetCars() {
-            List<Car> cars = new List<Car>();
+        public static ObservableCollection<Car> GetCars() {
+            ObservableCollection<Car> cars = new ObservableCollection<Car>();
             cars.Add(new Car() {
                 Name = "Avensis",
                 Id = 1,
@@ -45,6 +45,12 @@ namespace InternalClientSide.Model {
                 Name = "Fiesta",
                 Id = 3,
                 SerialNumber = "XD789XD",
+                Manufacturer = Manufacturer.FORD
+            });
+            cars.Add(new Car() {
+                Name = "Fiesta",
+                Id = 4,
+                SerialNumber = "XD123123123123XD",
                 Manufacturer = Manufacturer.FORD
             });
             return cars;
