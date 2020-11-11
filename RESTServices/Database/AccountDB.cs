@@ -24,7 +24,6 @@ namespace RESTServices.Database {
             }
         }
 
-
         public void Delete(int id) {
             using(SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
