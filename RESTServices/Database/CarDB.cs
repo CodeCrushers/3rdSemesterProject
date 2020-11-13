@@ -10,17 +10,20 @@ namespace RESTServices.Database {
 
     public class CarDB : ICRUD<Car> {
         private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
-        public void Create(Car entity) {
+        public object Create(Car entity) {
+            string variable;
             using(SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
                 using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber) VALUES (@brand, @model, @registrationNumber)";
-                    cmd.Parameters.AddWithValue("brand", entity.Manufacturer);
-                    cmd.Parameters.AddWithValue("model", entity.Name);
+                    cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber) OUTPUT INSERTED.registrationNumber VALUES  (@brand, @model, @registrationNumber) ";
+                    cmd.Parameters.AddWithValue("brand", entity.Brand);
+                    cmd.Parameters.AddWithValue("model", entity.Model); 
                     cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
-                    cmd.ExecuteNonQuery();
+                    variable = (string) cmd.ExecuteScalar();
+                    variable.ToString();
                 }
             }
+            return variable;
         }
 
         public IEnumerable<Car> CreateList(SqlDataReader reader) {
@@ -63,6 +66,10 @@ namespace RESTServices.Database {
             return car;
         }
 
+        public Car Get(int id) {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Car> GetAll() {
             throw new NotImplementedException();
         }
@@ -70,5 +77,6 @@ namespace RESTServices.Database {
         public void Update(Car entity) {
             throw new NotImplementedException();
         }
+
     }
 }

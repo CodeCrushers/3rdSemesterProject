@@ -11,17 +11,19 @@ namespace RESTServices.Database {
 
         private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
 
-        public void Create(Account entity) {
+        public object Create(Account entity) {
+            int id;
             using(SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
                 using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber) VALUES (@name, @email, @phonenumber)";
+                    cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber)";
                     cmd.Parameters.AddWithValue("name", entity.Name);
                     cmd.Parameters.AddWithValue("email", entity.Email);
                     cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                    cmd.ExecuteNonQuery();
+                    id = (int) cmd.ExecuteScalar();
                 }
             }
+            return id;
         }
 
         public void Delete(int id) {

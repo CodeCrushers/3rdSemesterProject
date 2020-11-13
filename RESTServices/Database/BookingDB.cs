@@ -11,12 +11,13 @@ namespace RESTServices.Database {
 
         private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
 
-        public void Create(Booking entity) {
+        public object Create(Booking entity) {
+            int id;
             using(SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
                 using(SqlCommand cmd = con.CreateCommand()) {
                     cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocationId, endLocationId, bookingDate, bookingRegistrationNumber)"
-                                      + "VALUES(@payedFor, @paymentAmount, @startLocationId, @endLocationId, @bookingDate, @bookingRegistrationNumber)";
+                                      + "OUTPUT INSERTED.id VALUES(@payedFor, @paymentAmount, @startLocationId, @endLocationId, @bookingDate, @bookingRegistrationNumber)";
 
                     cmd.Parameters.AddWithValue("payedFor", ConvertToBinary(entity.PayedFor));
                     cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
@@ -24,12 +25,13 @@ namespace RESTServices.Database {
                     cmd.Parameters.AddWithValue("endLocationId", entity.EndLocation);
                     cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
                     cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
-                    cmd.ExecuteNonQuery();
+                    id = (int) cmd.ExecuteScalar();
 
                 }
 
 
             }
+            return id;
 
         }
 
