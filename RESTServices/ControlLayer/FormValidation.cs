@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RESTServices.Database;
+using RESTServices.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -75,6 +77,10 @@ namespace RESTServices.ControlLayer {
 
         public bool IsEmailRegistered(string emailString) {
             bool result = false;
+            Account a = AccountDB.Get(emailString);
+            if(a != null) {
+                result = true;
+            }
             return result;
         }
 

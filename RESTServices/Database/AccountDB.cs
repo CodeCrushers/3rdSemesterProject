@@ -51,7 +51,7 @@ namespace RESTServices.Database {
             return account;
         }
 
-        public Account Get(string email) {
+        public static Account Get(string email) {
             Account account = null;
             using (SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
@@ -59,7 +59,9 @@ namespace RESTServices.Database {
                     cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
                     cmd.Parameters.AddWithValue("id", email);
                     var reader = cmd.ExecuteReader();
-                    account = CreateObject(reader, true);
+                    if (reader != null) {
+                        account = CreateObject(reader, true);
+                    }
                 }
             }
             return account;
