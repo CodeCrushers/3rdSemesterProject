@@ -21,9 +21,11 @@ namespace RESTServices.ControlLayer {
 
         public bool PasswordValidation(string input) {
             bool result = false;
-            if (LengthValidtion(input)) {
-                if (ContainsSpecialCharactersValidation(input)) {
-                    result = true;
+            if(LengthValidtion(input)) {
+                if(ContainsSpecialCharactersValidation(input)) {
+                    if(ContainsNumbersValidation(input)) {
+                        result = true;
+                    }
                 }
             }
             return result;
@@ -47,11 +49,32 @@ namespace RESTServices.ControlLayer {
             return result;
         }
 
-        public bool ContainsSpecialCharactersValidation(string yourString) {
+        public bool LengthValidation(string input, int min, int max) {
             bool result = false;
-            if (yourString.Any(ch => !Char.IsLetterOrDigit(ch))) {
+            if (input.Length > min && input.Length < max) {
                 result = true;
             }
+            return result;
+        }
+
+        public bool ContainsSpecialCharactersValidation(string inputString) {
+            bool result = false;
+            if (inputString.Any(ch => !Char.IsLetterOrDigit(ch))) {
+                result = true;
+            }
+            return result;
+        }
+
+        public bool ContainsNumbersValidation(string inputString) {
+            bool result = false;
+            if (inputString.Any(ch => Char.IsDigit(ch))) {
+                result = true;
+            }
+            return result;
+        }
+
+        public bool IsEmailRegistered(string emailString) {
+            bool result = false;
             return result;
         }
 
