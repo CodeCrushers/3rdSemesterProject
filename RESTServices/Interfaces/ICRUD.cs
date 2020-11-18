@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace RESTServices.Models {
     public interface ICRUD<T> {
-        void Create(T entity);
+        object Create(T entity);
         T Get(int id);
         IEnumerable<T> GetAll();
         void Update(T entity);
