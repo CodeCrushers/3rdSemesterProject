@@ -14,6 +14,5 @@ namespace RESTServices.Models {
         void Update(T entity);
         void Delete(int id);
         IEnumerable<T> CreateList(SqlDataReader reader);
-        T CreateObject(SqlDataReader reader, bool singleRead);
     }
 }
