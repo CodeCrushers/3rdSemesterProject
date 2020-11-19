@@ -103,6 +103,9 @@
 
 
 <script>
+
+    var distanceMeter = 0;
+    var distanceKMeter = 0;
     function initMap() {
         var danmark = new google.maps.LatLng(56.223103, 9.341210);
         const map = new google.maps.Map(document.getElementById("map"),{
@@ -167,8 +170,10 @@
                 },
                 (response, status) => {
                     if (status === "OK") {
-                        document.getElementById("distance").innerHTML = "hej";
-                        console.log(response.routes[0].legs[0].distance.value);
+                        distanceMeter = response.routes[0].legs[0].distance.value;
+                        console.log(distanceMeter);
+                        distanceKMeter = response.routes[0].legs[0].distance.value / 1000;
+                        console.log(distanceKMeter);
                         me.directionsRenderer.setDirections(response);
                     } else {
                         window.alert("Directions request failed due to " + status);
@@ -177,6 +182,7 @@
             );
         }
     }
+
 
 
 </script>
