@@ -12,7 +12,7 @@ namespace RESTServices.Models {
         T Get(int id);
         IEnumerable<T> GetAll();
         void Update(T entity);
-        void Delete(int id);
+        object Delete(int id);
         IEnumerable<T> CreateList(SqlDataReader reader);
     }
 }

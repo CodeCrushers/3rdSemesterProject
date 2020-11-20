@@ -33,18 +33,20 @@ namespace RESTServices.Database {
             return id;
         }
 
-        public void Delete(int id) {
+        public object Delete(int id) {
+            Object o = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "DELETE FROM Accounts WHERE id = @id";
+                        cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
                         cmd.Parameters.AddWithValue("id", id);
-                        cmd.ExecuteNonQuery();
+                        o = cmd.ExecuteScalar();
                     }
                 }
                 scope.Complete();
             }
+            return o;
         }
 
         public Account Get(int id) {

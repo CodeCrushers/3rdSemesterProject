@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Transactions;
 using System.Linq;
 using System.Web;
 
@@ -10,6 +11,7 @@ namespace RESTServices.Database {
 
     public class CarDB : ICRUD<Car> {
         private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+
         public object Create(Car entity) {
             string variable;
             using(SqlConnection con = new SqlConnection(_connectionString)) {
@@ -30,7 +32,7 @@ namespace RESTServices.Database {
             throw new NotImplementedException();
         }
 
-        public Car CreateObject(SqlDataReader reader, bool singleRead) {
+        public static Car CreateObject(SqlDataReader reader, bool singleRead) {
             if (singleRead) {
                 reader.Read();
             }
@@ -47,21 +49,24 @@ namespace RESTServices.Database {
             return car;
         }
 
-        public void Delete(int id) {
+        public object Delete(int id) {
             throw new NotImplementedException();
         }
 
 
         public Car Get(string registrationNumber) {
             Car car = null;
-            using (SqlConnection con = new SqlConnection(_connectionString)) {
-                con.Open();
-                using (SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "SELECT * FROM Cars WHERE id = @id";
-                    cmd.Parameters.AddWithValue("id", registrationNumber);
-                    var reader = cmd.ExecuteReader();
-                    car = CreateObject(reader, true);
+            using (TransactionScope scope = new TransactionScope()) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                        cmd.Parameters.AddWithValue("registrationNumber", registrationNumber);
+                        var reader = cmd.ExecuteReader();
+                        car = CreateObject(reader, true);
+                    }
                 }
+                scope.Complete();
             }
             return car;
         }
