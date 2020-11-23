@@ -8,78 +8,96 @@ using System.Configuration;
 namespace TestProjekt {
     [TestClass]
     public class AccountCrudTests {
-        private int accountId;
-        private Account account;
-        private AccountDB accountDB;
 
+        /*
+         * For this test to work, it is a requirement for all test methods to run within the same instance, and that they run in order
+         * This can be done by selecting the group as a whole within the testing window and testing them there
+         */
+
+        public static int accountId;
+        public static Account generatedAccount;
+        public static Account DatabaseAccount;
+        public static Account UpdatedAccount;
+        public AccountDB db;
 
         [TestInitialize]
         public void StartSetup() {
-            account = new Account() {
-                Name = "Ole",
-                Email = "OKOKOK@Gmail.com",
-                Phone = "31645121"
+            generatedAccount = new Account() {
+                Email = "test@test.tet",
+                Name = "SnoopG",
+                Phone = "88888888"
             };
-            accountDB = new AccountDB();
-            accountId = (int) accountDB.Create(account);
-
+            db = new AccountDB();
         }
 
         [TestMethod]
         public void Test10_Create() {
+            //Arrange
+            bool result = false;
 
-            Account accountFromDB;
-            accountFromDB = accountDB.Get(accountId);
-            Console.WriteLine("CREATE METHOD" + "Account Id = " + accountId);
-            account.Id = accountId;
-            Console.WriteLine(account.Id + account.Name + account.Email + account.Phone);
-            Console.WriteLine(accountFromDB.Id + accountFromDB.Name + accountFromDB.Email + accountFromDB.Phone);
+            //Act
+            var returnedObject = db.Create(generatedAccount);
+            if(returnedObject is int && returnedObject != null) {
+                accountId = (int)returnedObject;
+                generatedAccount.Id = accountId;
+                result = true;
+            }
 
-            Assert.AreEqual(account, accountFromDB);
-            //Assert.IsTrue(account.Equals(accountFromDB));
+            //Assert
+            Assert.IsTrue(result);
+
         }
 
         [TestMethod]
         public void Test20_Get() {
+            //Arrange
+            bool result = false;
+            //Act
+            var account = db.Get(accountId);
+            if(account is Account && account != null) {
+                DatabaseAccount = (Account)account;
+                result = true;
+            }
 
-            Account accountFromDB;
-            Console.WriteLine("GET METHOD " + accountId);
-            accountFromDB = accountDB.Get(accountId);
-
-            Assert.AreEqual(account, accountFromDB);
-            //Assert.IsTrue(account.Equals(accountFromDB));
-
+            //Assert
+            Assert.IsTrue(result);
 
         }
 
         [TestMethod]
-
         public void Test30_Update() {
-            Account updateAccount = new Account() {
-                Id = accountId,
-                Name = "Ikke Ole",
-                Email = "NyEmail@gmail.com",
-                Phone = "15469712",
+            //Arrange
+            Account changedGeneratedAccount = new Account() {
+                Email = "test@test.tet",
+                Name = "Echo",
+                Phone = "88888888",
+                Id = accountId
             };
-            accountDB.Update(updateAccount);
-            Account accountFromDB = accountDB.Get(accountId);
-            Assert.AreNotEqual(account, accountFromDB);
 
+            //Act
+            db.Update(changedGeneratedAccount);
+            var account = db.Get(accountId);
+            if (account is Account && account != null) {
+                UpdatedAccount = (Account)account;
+            }
+
+            //Assert
+            Assert.AreNotEqual(DatabaseAccount.Name, UpdatedAccount.Name);
         }
 
         [TestMethod]
         public void Test40_Delete() {
-            Account accountFromDB = null;
-            accountDB.Delete(accountId);
-            try {
-            accountFromDB = accountDB.Get(accountId);
+            //Arrange
+            bool result = false;
 
+            //Act
+            var id = db.Delete(accountId);
+            if(id is int && id != null && (int)id == accountId) {
+                result = true;
             }
-            catch (InvalidOperationException e) {
 
-            }
-
-            Assert.IsNull(accountFromDB);
+            //Assert
+            Assert.IsTrue(result);
 
         }
 

@@ -103,8 +103,7 @@ namespace TestProjekt {
 
             //Act
             var id = db.Delete(bookingId); //Number inside method needs to be an excisting ID for a booking for test to return positive, else negative results are returned.
-            if (b is Booking) {
-                if (id is int) {
+            if (id is int) {
                 if((int)id == bookingId) {
                     result = true;
                 }
