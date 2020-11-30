@@ -77,7 +77,7 @@ namespace RESTServices.ControlLayer {
 
         public bool IsEmailRegistered(string emailString) {
             bool result = false;
-            Account a = AccountDB.Get(emailString);
+            Account a = new AccountDB().Get(emailString);
             if(a != null) {
                 result = true;
             }
