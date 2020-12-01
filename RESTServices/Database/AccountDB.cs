@@ -66,14 +66,14 @@ namespace RESTServices.Database {
             return account;
         }
 
-        public static Account Get(string email) {
+        public Account Get(string email) {
             Account account = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
-                        cmd.Parameters.AddWithValue("id", email);
+                        cmd.Parameters.AddWithValue("email", email);
                         var reader = cmd.ExecuteReader();
                         if (reader != null) {
                             account = CreateObject(reader, true);
