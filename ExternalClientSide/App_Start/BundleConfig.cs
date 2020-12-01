@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace Google_api_test
+namespace ExternalClientSide
 {
     public class BundleConfig
     {

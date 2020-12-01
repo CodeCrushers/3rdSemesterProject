@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Google_api_test.Controllers
+namespace ExternalClientSide.Controllers
 {
     public class HomeController : Controller
     {
@@ -20,9 +20,9 @@ namespace Google_api_test.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult LoginPage()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Your Login Page";
 
             return View();
         }
