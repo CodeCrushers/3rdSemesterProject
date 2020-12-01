@@ -23,11 +23,6 @@ namespace RESTServices.Controllers
             return helloString;
         }
 
-        [HttpGet, Route("{id}")]
-        public string Get(int id) {
-            return null;
-        }
-
     }
 
 }
