@@ -61,28 +61,30 @@ namespace RESTServices.Database {
             return booking;
         }
 
-        public Booking Get(int id) {
+        public Booking Get(object var) {
             Booking booking = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Booking WHERE id = @id";
-                        cmd.Parameters.AddWithValue("id", id);
-                        var reader = cmd.ExecuteReader();
-                        booking = CreateObject(reader, true);
-                        string registrationNumber = reader.GetString(reader.GetOrdinal("bookingRegistrationNumber"));
-                        reader.Close();
-                        using (SqlCommand carCmd = con.CreateCommand()) {
-                            carCmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
-                            carCmd.Parameters.AddWithValue("registrationNumber", registrationNumber);
-                            var carReader = carCmd.ExecuteReader();
-                            Car car = CarDB.CreateObject(carReader, true);
-                            booking.BookingCar = car;
+            if (var is int) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            cmd.CommandText = "SELECT * FROM Booking WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            var reader = cmd.ExecuteReader();
+                            booking = CreateObject(reader, true);
+                            string registrationNumber = reader.GetString(reader.GetOrdinal("bookingRegistrationNumber"));
+                            reader.Close();
+                            using (SqlCommand carCmd = con.CreateCommand()) {
+                                carCmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                                carCmd.Parameters.AddWithValue("registrationNumber", registrationNumber);
+                                var carReader = carCmd.ExecuteReader();
+                                Car car = CarDB.CreateObject(carReader, true);
+                                booking.BookingCar = car;
+                            }
                         }
                     }
-                }
-                scope.Complete();
+                    scope.Complete();
+                } 
             }
             return booking;
         }
@@ -114,7 +116,6 @@ namespace RESTServices.Database {
                         cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
                         cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
                         cmd.Parameters.AddWithValue("id", entity.Id);
-                        Console.WriteLine(cmd.ToString());
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -122,18 +123,20 @@ namespace RESTServices.Database {
             }
         }
 
-        public object Delete(int id) {
+        public object Delete(object var) {
             object o = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "DELETE FROM Booking OUTPUT DELETED.id WHERE id = @id";
-                        cmd.Parameters.AddWithValue("id", id);
-                        o = cmd.ExecuteScalar();
+            if (var is int) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            cmd.CommandText = "DELETE FROM Booking OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            o = cmd.ExecuteScalar();
+                        }
                     }
-                }
-                scope.Complete();
+                    scope.Complete();
+                } 
             }
             return o;
         }

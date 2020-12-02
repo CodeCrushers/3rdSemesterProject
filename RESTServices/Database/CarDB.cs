@@ -13,23 +13,100 @@ namespace RESTServices.Database {
         private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
 
         public object Create(Car entity) {
-            string variable;
-            using(SqlConnection con = new SqlConnection(_connectionString)) {
-                con.Open();
-                using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber) OUTPUT INSERTED.registrationNumber VALUES  (@brand, @model, @registrationNumber) ";
-                    cmd.Parameters.AddWithValue("brand", entity.Brand);
-                    cmd.Parameters.AddWithValue("model", entity.Model); 
-                    cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
-                    variable = (string) cmd.ExecuteScalar();
-                    variable.ToString();
+            object  variable = null;
+            using (TransactionScope scope = new TransactionScope()) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber) OUTPUT INSERTED.registrationNumber VALUES (@brand, @model, @registrationNumber) ";
+                        cmd.Parameters.AddWithValue("brand", entity.Brand);
+                        cmd.Parameters.AddWithValue("model", entity.Model);
+                        cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
+                        variable = cmd.ExecuteScalar();
+                    }
                 }
+                scope.Complete();
             }
             return variable;
         }
 
+
+        public object Delete(object reg) {
+            object var = null;
+            if (reg is string) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            cmd.CommandText = "DELETE FROM Cars OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", reg);
+                            var = cmd.ExecuteScalar();
+                        }
+                    }
+
+                }
+            }
+            return var;
+        }
+
+        public Car Get(object var) {
+            Car car = null;
+            if (var is string) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                            cmd.Parameters.AddWithValue("registrationNumber", var);
+                            var reader = cmd.ExecuteReader();
+                            car = CreateObject(reader, true);
+                        }
+                    }
+                    scope.Complete();
+                } 
+            }
+            return car;
+        }
+
+        public IEnumerable<Car> GetAll() {
+            IEnumerable<Car> list = null;
+            using(TransactionScope scope = new TransactionScope()) {
+                using(SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using(SqlCommand cmd = con.CreateCommand()) {
+                        cmd.CommandText = "SELECT * FROM Cars";
+                        var reader = cmd.ExecuteReader();
+                        list = CreateList(reader);
+                    }
+                }
+                scope.Complete();
+            }
+            return list;
+        }
+
+        public void Update(Car entity) {
+            using (TransactionScope scope = new TransactionScope()) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        cmd.CommandText = "UPDATE Cars SET brand = @brand, model = @model, registrationNumber = @registrationNumber";
+                        cmd.Parameters.AddWithValue("brand", entity.Brand);
+                        cmd.Parameters.AddWithValue("model", entity.Model);
+                        cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                scope.Complete();
+            }
+        }
+
         public IEnumerable<Car> CreateList(SqlDataReader reader) {
-            throw new NotImplementedException();
+            List<Car> bookings = new List<Car>();
+            while (reader.Read()) {
+                Car car = CreateObject(reader, false);
+                bookings.Add(car);
+            }
+            return bookings;
         }
 
         public static Car CreateObject(SqlDataReader reader, bool singleRead) {
@@ -47,40 +124,6 @@ namespace RESTServices.Database {
                 
             };
             return car;
-        }
-
-        public object Delete(int id) {
-            throw new NotImplementedException();
-        }
-
-
-        public Car Get(string registrationNumber) {
-            Car car = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
-                        cmd.Parameters.AddWithValue("registrationNumber", registrationNumber);
-                        var reader = cmd.ExecuteReader();
-                        car = CreateObject(reader, true);
-                    }
-                }
-                scope.Complete();
-            }
-            return car;
-        }
-
-        public Car Get(int id) {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Car> GetAll() {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Car entity) {
-            throw new NotImplementedException();
         }
 
     }

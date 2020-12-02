@@ -9,10 +9,10 @@ using System.Xml.Serialization;
 namespace RESTServices.Models {
     public interface ICRUD<T> {
         object Create(T entity);
-        T Get(int id);
+        T Get(object var);
         IEnumerable<T> GetAll();
         void Update(T entity);
-        object Delete(int id);
+        object Delete(object var);
         IEnumerable<T> CreateList(SqlDataReader reader);
     }
 }

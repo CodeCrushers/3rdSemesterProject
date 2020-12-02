@@ -33,35 +33,39 @@ namespace RESTServices.Database {
             return id;
         }
 
-        public object Delete(int id) {
+        public object Delete(object var) {
             Object o = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
-                        cmd.Parameters.AddWithValue("id", id);
-                        o = cmd.ExecuteScalar();
+            if (var is int) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            o = cmd.ExecuteScalar();
+                        }
                     }
-                }
-                scope.Complete();
+                    scope.Complete();
+                } 
             }
             return o;
         }
 
-        public Account Get(int id) {
+        public Account Get(object var) {
             Account account = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
-                        cmd.Parameters.AddWithValue("id", id);
-                        var reader = cmd.ExecuteReader();
-                        account = CreateObject(reader, true);
+            if (var is int) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            var reader = cmd.ExecuteReader();
+                            account = CreateObject(reader, true);
+                        }
                     }
-                }
-                scope.Complete();
+                    scope.Complete();
+                } 
             }
             return account;
         }
