@@ -11,19 +11,16 @@
         >
     <DockPanel x:Name="MainDockPanel" >
         <ListBox DockPanel.Dock="Left" Background="LightSlateGray">
-            <ListBoxItem>Home</ListBoxItem>
-            <ListBoxItem>Account</ListBoxItem>
-            <ListBoxItem>Car</ListBoxItem>
-            <ListBoxItem>Admin</ListBoxItem>
-            <ListBoxItem>Options</ListBoxItem>
+            <ListBoxItem MouseDoubleClick="OpenMainPage">Home</ListBoxItem>
+            <ListBoxItem MouseDoubleClick="OpenAccountPage">Account</ListBoxItem>
+            <ListBoxItem MouseDoubleClick="OpenCarPage">Car</ListBoxItem>
+            <ListBoxItem >Admin</ListBoxItem>
+            <ListBoxItem >Options</ListBoxItem>
         </ListBox>
-        <DockPanel Name="ContentPanel" IsEnabled="True">
-
-            <TextBlock DockPanel.Dock="Top" TextAlignment="Center" Background="Azure" HorizontalAlignment="Stretch" FontWeight="UltraBold" FontSize="24" Foreground="Coral">Frem Til Tiden Internal Homepage</TextBlock>
-            <DockPanel>
-                <TextBlock TextWrapping="Wrap">Something about what this software is supposed to do. Reference documentation and a guide to the software</TextBlock>
-            </DockPanel>
+        <DockPanel Name="ContentPanel" IsEnabled="True" DockPanel.Dock="Right">
+            <Frame Name="ContentFrame" Content="{Binding}">
+            
+            </Frame>
         </DockPanel>
-        
     </DockPanel>
 </Window>

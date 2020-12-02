@@ -20,8 +20,28 @@ namespace InternalClientSide {
     /// </summary>
     public partial class MainWindow : Window {
 
+        private List<Page> pages;
+
         public MainWindow() {
             InitializeComponent();
+            pages = new List<Page>();
+            pages.Add(new MainPage());
+            pages.Add(new CarPage());
+            pages.Add(new AccountPage());
+            ContentFrame.DataContext = new MainPage();
+        }
+
+        private void OpenMainPage(object sender, MouseButtonEventArgs e) {
+            ContentFrame.DataContext = pages[0];
+        }
+
+        private void OpenCarPage(object sender, MouseButtonEventArgs e) {
+            ContentFrame.DataContext = pages[1];
+            
+        }
+
+        private void OpenAccountPage(object sender, MouseButtonEventArgs e) {
+            ContentFrame.DataContext = pages[2];
         }
 
     }
