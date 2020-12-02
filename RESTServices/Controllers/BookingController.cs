@@ -24,5 +24,20 @@ namespace RESTServices.Controllers {
         public Booking Get(int id) {
             return db.Get(id);
         }
+
+        [HttpPost]
+        public void Post(Booking booking) {
+            db.Create(booking);
+        }
+
+        [HttpPut]
+        public void Put(Booking booking) {
+            db.Update(booking);
+        }
+
+        [HttpDelete, Route("{id}")]
+        public void Delete(int id) {
+            db.Delete(id);
+        }
     }
 }

@@ -7,58 +7,36 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace RESTServices.Controllers
-{
-    public class AccountController : ApiController
-    {
+namespace RESTServices.Controllers {
 
-        private AccountDB accountDB = new AccountDB();
-        // GET: api/Account
+    [RoutePrefix("api/Account")]
+    public class AccountController : ApiController {
+
+        private AccountDB db = new AccountDB();
+
         [HttpGet]
-        public IEnumerable<Account> Get()
-        {
-            return accountDB.GetAll();
+        public IEnumerable<Account> Get() {
+            return db.GetAll();
         }
 
-        // GET: api/Account/testemail@gmail.com / 1
         [HttpGet]
-        public Account Get(string email)
-        {
-            Account account = accountDB.Get(email);
-            if (account is null) {
-                account = new Account {
-                    Name = "Fail",
-                    Email = "Fail",
-                    Id = -1,
-                    Phone = "0000000"
-
-                };
-            }
-            return account;
-
-
+        public Account Get(string email) {
+            return db.Get(email);
         }
 
-
-
-        // POST: api/Account
-        public IHttpActionResult Post([FromBody]Account account)
-        {
-            var id = accountDB.Create(account);
-            if (id == null) {
-                return InternalServerError();
-            }
-            return Created<Account>("Accounts", account);
+        [HttpPost]
+        public void Post(Account val) {
+            db.Create(val);
         }
 
-        // PUT: api/Account/5
-        public void Put(int id, [FromBody]string value)
-        {
+        [HttpPut]
+        public void Put(Account val) {
+            db.Update(val);
         }
 
-        // DELETE: api/Account/5
-        public void Delete(int id)
-        {
+        [HttpDelete, Route("{id}")]
+        public void Delete(int id) {
+            db.Delete(id);
         }
     }
 }

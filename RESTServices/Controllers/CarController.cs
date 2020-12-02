@@ -9,20 +9,35 @@ using System.Web.Http;
 
 namespace RESTServices.Controllers
 {
-    [RoutePrefix("api/car")]
+    [RoutePrefix("api/Car")]
     public class CarController : ApiController {
 
+        CarDB db = new CarDB();
+
         [HttpGet]
-        public string Get() {
-            return "Hello World";
+        public IEnumerable<Car> Get() {
+            return db.GetAll();
         }
 
-        [HttpGet, Route("{name}")]
-        public string Get(string name) {
-            string helloString = "Hello " + name;
-            return helloString;
+        [HttpGet, Route("{id}")]
+        public Car Get(int id) {
+            return db.Get(id);
         }
 
+        [HttpPost]
+        public void Post(Car car) {
+            db.Create(car);
+        }
+
+        [HttpPut]
+        public void Pu(Car car) {
+            db.Update(car);
+        }
+
+        [HttpDelete, Route("{id}")]
+        public void Delete(int id) {
+            db.Delete(id);
+        }
     }
 
 }
