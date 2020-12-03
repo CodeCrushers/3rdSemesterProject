@@ -21,10 +21,11 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber)";
+                        cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        cmd.Parameters.AddWithValue("passowrd", entity.Password);
                         id = (int)cmd.ExecuteScalar();
                     }
                 }
@@ -110,11 +111,12 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
+                        cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        cmd.Parameters.AddWithValue("password", entity.Password);
                         cmd.ExecuteNonQuery();
                     }
                 }
