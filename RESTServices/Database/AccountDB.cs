@@ -96,7 +96,7 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT id, name, email, phonenumber FROM Accounts";
+                        cmd.CommandText = "SELECT id, name, email, phonenumber, Password FROM Accounts";
                         var reader = cmd.ExecuteReader();
                         accounts = CreateList(reader);
                     }
