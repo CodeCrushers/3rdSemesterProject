@@ -141,7 +141,8 @@ namespace RESTServices.Database {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
-                Phone = reader.GetString(reader.GetOrdinal("phonenumber"))
+                Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
+                Password = reader.GetString(reader.GetOrdinal("Password"))
             };
             return a;
         }
