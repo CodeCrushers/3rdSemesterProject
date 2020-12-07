@@ -73,6 +73,7 @@
     <Compile Include="Gui\ViewAccountPage.xaml.cs">
       <DependentUpon>ViewAccountPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\Account.cs" />
     <Compile Include="Services\CarService.cs" />
     <Page Include="Gui\AccountPage.xaml">
       <Generator>MSBuild:Compile</Generator>

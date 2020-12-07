@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net.Http;
+using InternalClientSide.Model;
 
 namespace InternalClientSide.Gui {
     /// <summary>
@@ -36,7 +37,12 @@ namespace InternalClientSide.Gui {
             string password = PasswordInputPass.Password;
             string phoneNumber = GetText(PhoneInput.Document);
             string email = GetText(EmailInput.Document);
-
+            Account account = new Account {
+                Name = name,
+                Password = password,
+                Phone = phoneNumber,
+                Email = email
+            };
             // IMPLEMENT API CONNECTION HERE
             // USE JSON SERIALIZATION
         }
