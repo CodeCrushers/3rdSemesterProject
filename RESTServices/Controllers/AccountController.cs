@@ -1,4 +1,5 @@
-﻿using RESTServices.Database;
+﻿using RESTServices.ControlLayer;
+using RESTServices.Database;
 using RESTServices.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace RESTServices.Controllers {
     public class AccountController : ApiController {
 
         private AccountDB db = new AccountDB();
+        private FormValidation validation = new FormValidation();
 
         [HttpGet]
         public IEnumerable<Account> Get() {
@@ -25,18 +27,32 @@ namespace RESTServices.Controllers {
         }
 
         [HttpPost]
-        public void Post(Account val) {
-            db.Create(val);
+        public HttpStatusCode Post(Account val) {
+            HttpStatusCode code;
+            if (validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
+                db.Create(val);
+                code = HttpStatusCode.Accepted;
+            } else {
+                code = HttpStatusCode.BadRequest;
+            }
+            return code;
         }
 
         [HttpPut]
-        public void Put(Account val) {
-            db.Update(val);
+        public HttpStatusCode Put(Account val) {
+            HttpStatusCode code;
+            if(validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
+                db.Update(val);
+                code = HttpStatusCode.Created;
+            } else {
+                code = HttpStatusCode.BadRequest;
+            }
+            return code;
         }
 
         [HttpDelete, Route("{id}")]
         public void Delete(int id) {
-            db.Delete(id);
+             db.Delete(id); 
         }
     }
 }
