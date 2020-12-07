@@ -25,7 +25,7 @@ namespace RESTServices.Database {
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("passowrd", entity.Password);
+                        cmd.Parameters.AddWithValue("password", entity.Password);
                         id = (int)cmd.ExecuteScalar();
                     }
                 }

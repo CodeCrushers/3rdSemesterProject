@@ -27,15 +27,20 @@ namespace RESTServices.Controllers {
         }
 
         [HttpPost]
-        public HttpStatusCode Post(Account val) {
+        public void Post(Account val) {
+            if(val != null) {
+                db.Create(val);
+            }
+            /*
             HttpStatusCode code;
             if (validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
-                db.Create(val);
                 code = HttpStatusCode.Accepted;
             } else {
                 code = HttpStatusCode.BadRequest;
             }
+
             return code;
+            */
         }
 
         [HttpPut]
