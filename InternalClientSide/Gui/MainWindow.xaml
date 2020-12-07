@@ -1,4 +1,4 @@
-﻿<Window x:Class="InternalClientSide.MainWindow"
+﻿<Window x:Class="InternalClientSide.Gui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,9 +11,9 @@
         >
     <DockPanel x:Name="MainDockPanel" >
         <ListBox DockPanel.Dock="Left" Background="LightSlateGray">
-            <ListBoxItem MouseDoubleClick="OpenMainPage">Home</ListBoxItem>
-            <ListBoxItem MouseDoubleClick="OpenAccountPage">Account</ListBoxItem>
-            <ListBoxItem MouseDoubleClick="OpenCarPage">Car</ListBoxItem>
+            <ListBoxItem MouseLeftButtonUp="OpenMainPage">Home</ListBoxItem>
+            <ListBoxItem MouseLeftButtonUp="OpenAccountPage">Account</ListBoxItem>
+            <ListBoxItem MouseLeftButtonUp="OpenCarPage">Car</ListBoxItem>
             <ListBoxItem >Admin</ListBoxItem>
             <ListBoxItem >Options</ListBoxItem>
         </ListBox>

@@ -13,13 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace InternalClientSide {
+namespace InternalClientSide.Gui {
     /// <summary>
-    /// Interaction logic for MainPage.xaml
+    /// Interaction logic for ViewAccountPage.xaml
     /// </summary>
-    public partial class MainPage : Page {
-        public MainPage() {
+    public partial class ViewAccountPage : Page {
+        public ViewAccountPage() {
             InitializeComponent();
+            AccountBookings.DataContext = null;
         }
     }
 }
