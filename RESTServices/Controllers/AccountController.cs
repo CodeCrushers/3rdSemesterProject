@@ -29,8 +29,8 @@ namespace RESTServices.Controllers {
         [HttpPost]
         public HttpStatusCode Post(Account val) {
             HttpStatusCode code;
-            if (validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
                 db.Create(val);
+            if (validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
                 code = HttpStatusCode.Accepted;
             } else {
                 code = HttpStatusCode.BadRequest;

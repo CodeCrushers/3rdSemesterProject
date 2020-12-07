@@ -14,22 +14,36 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net.Http;
 using InternalClientSide.Model;
+using System.Web.Script.Serialization;
 
 namespace InternalClientSide.Gui {
     /// <summary>
     /// Interaction logic for CreateAccountPage.xaml
     /// </summary>
     public partial class CreateAccountPage : Page {
+
+
+
+        public HttpClient HttpClient = new HttpClient();
+        private StringBuilder stringBuilder;
+
         public CreateAccountPage() {
             InitializeComponent();
+            stringBuilder = new StringBuilder();
+            
         }
 
 
         private string GetText(FlowDocument flowDocument) {
-            
             var pointerStart = flowDocument.ContentStart;
             var pointerEnd = flowDocument.ContentEnd;
-            return new TextRange(pointerStart, pointerEnd).Text;
+            string text = new TextRange(pointerStart, pointerEnd).Text;
+
+            if (text.EndsWith("\r\n")) {
+                text = new TextRange(pointerStart, pointerEnd.GetPositionAtOffset(-2)).Text;
+            }
+
+            return text;
         }
 
         private void CreateUserButton(object sender, RoutedEventArgs e) {
@@ -43,6 +57,10 @@ namespace InternalClientSide.Gui {
                 Phone = phoneNumber,
                 Email = email
             };
+            Console.WriteLine("its here");
+            var json = new JavaScriptSerializer().Serialize(account);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = HttpClient.PostAsync("https://localhost:44346/api/account", stringContent);
             // IMPLEMENT API CONNECTION HERE
             // USE JSON SERIALIZATION
         }

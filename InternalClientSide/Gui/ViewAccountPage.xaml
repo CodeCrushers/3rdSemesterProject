@@ -27,10 +27,10 @@
             <TextBlock  Grid.Column="2" HorizontalAlignment="Right">
                 Email:
             </TextBlock>
-            <RichTextBox MinWidth="250" Margin="20,0,0,0" Name="EmailInput" Grid.Column="3">
+            <RichTextBox MinWidth="200" Margin="20,0,0,0" Name="EmailInput" Grid.Column="3">
                 <FlowDocument/>
             </RichTextBox>
-            <Button Margin="20,0,0,0" HorizontalContentAlignment="Stretch" Grid.Column="4"  HorizontalAlignment="Stretch">Search</Button>
+            <Button Margin="20,0,0,0" HorizontalContentAlignment="Stretch" Grid.Column="4"  HorizontalAlignment="Stretch" Click="GetAccount">Search</Button>
         </Grid>
         <Grid Margin="0,5,0,0" >
             <Grid.ColumnDefinitions>
@@ -55,15 +55,18 @@
             <TextBlock Grid.Row="6" Text="Bookings:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Height="16" Width="50"/>
             <TextBlock Grid.Row="6" Grid.Column="1" Text="Booking:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Height="16" Width="50"/>
             <TextBlock Grid.Row="6" Grid.Column="2" Text="Car:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Height="16" Width="50"/>
-            <RichTextBox Grid.Row="1" Height="20">
+            <RichTextBox Name="CurrentNameInput" Grid.Row="1" Height="20">
                 <FlowDocument/>
             </RichTextBox>
-            <RichTextBox Grid.Row="3" Height="20">
+            <RichTextBox Name="CurrentPhoneInput" Grid.Row="3" Height="20">
                 <FlowDocument/>
             </RichTextBox>
-            <RichTextBox Grid.Row="5" Height="20">
+            <RichTextBox Name="CurrentEmailInput" Grid.Row="5" Height="20">
                 <FlowDocument/>
             </RichTextBox>
+            <Button Name="ChangeAccountButton" Grid.Row="5" Grid.Column="1" Height="20" Width="200" MouseLeftButtonUp="ChangeAccountButton_MouseLeftButtonUp">
+                Change account info
+            </Button>
             <ListView Name="AccountBookings" ItemsSource="{Binding}" Grid.Row="7" Grid.RowSpan="8" >
 
             </ListView>
