@@ -1,4 +1,5 @@
-﻿using InternalClientSide.Model;
+﻿using InternalClientSide.Controllers;
+using InternalClientSide.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,40 +22,46 @@ namespace InternalClientSide.Gui {
     /// </summary>
     public partial class ViewAccountPage : Page {
 
-        private HttpClient HttpClient;
-        private string baseurl = "https://localhost:44346/api/";
+        private AccountController accountController;
         public ViewAccountPage() {
             InitializeComponent();
             AccountBookings.DataContext = null;
-            HttpClient = new HttpClient();
+            accountController = new AccountController();
         }
 
-        private void ChangeAccountButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
-            string name = GetText(CurrentNameInput.Document);
-            string phoneNumber = GetText(CurrentPhoneInput.Document);
-            string email = GetText(CurrentEmailInput.Document);
-
+        private void ChangeAccount(object sender, RoutedEventArgs e) {
+            Account account = accountController.Account;
+            if (account != null) {
+                accountController.Account.Name = GetText(CurrentNameInput.Document);
+                accountController.Account.Phone = GetText(CurrentPhoneInput.Document);
+                accountController.Account.Email  = GetText(CurrentEmailInput.Document);
+                accountController.ChangeAccount(accountController.Account);
+            }
         }
 
         private string GetText(FlowDocument flowDocument) {
             var pointerStart = flowDocument.ContentStart;
             var pointerEnd = flowDocument.ContentEnd;
-            return new TextRange(pointerStart, pointerEnd).Text;
+            string text = new TextRange(pointerStart, pointerEnd).Text;
+
+            if (text.EndsWith("\r\n")) {
+                text = new TextRange(pointerStart, pointerEnd.GetPositionAtOffset(-2)).Text;
+            }
+            return text;
         }
 
         private void GetAccount(object sender, RoutedEventArgs e) {
-            Console.WriteLine("in here");
             string email = GetText(EmailInput.Document);
-            string fullUrl = baseurl + "account?email=" + email;
-            Console.WriteLine(fullUrl);
-            var response = HttpClient.GetAsync(fullUrl).Result;
-            response.EnsureSuccessStatusCode();
-            Account account = response.Content.ReadAsAsync<Account>().Result;
+            Account account = accountController.GetAccount(email);
+            if (account != null) {
+                CurrentNameInput.AppendText(account.Name);
+                CurrentEmailInput.AppendText(account.Email);
+                CurrentPhoneInput.AppendText(account.Phone);
+            }
+            
 
-            Console.WriteLine(account.Email);
-            Console.WriteLine(account.Name);
-            Console.WriteLine(account.Phone);
             //Console.WriteLine(response.Result.Content.ReadAsAsync<IEnumrable<Account>>);
         }
+
     }
 }

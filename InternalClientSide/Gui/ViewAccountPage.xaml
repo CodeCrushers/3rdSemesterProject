@@ -13,21 +13,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Column="0" HorizontalAlignment="Right">
-                Username:
-            </TextBlock>
-            <RichTextBox MinWidth="150"  Name="UsernameInput" Grid.Column="1">
-                <FlowDocument/>
-            </RichTextBox>
-            <TextBlock  Grid.Column="2" HorizontalAlignment="Right">
+            <TextBlock  Grid.Column="0" HorizontalAlignment="Right">
                 Email:
             </TextBlock>
-            <RichTextBox MinWidth="200" Margin="20,0,0,0" Name="EmailInput" Grid.Column="3">
+            <RichTextBox MinWidth="200" Margin="20,0,0,0" Name="EmailInput" Grid.Column="1">
                 <FlowDocument/>
             </RichTextBox>
             <Button Margin="20,0,0,0" HorizontalContentAlignment="Stretch" Grid.Column="4"  HorizontalAlignment="Stretch" Click="GetAccount">Search</Button>
@@ -64,7 +55,7 @@
             <RichTextBox Name="CurrentEmailInput" Grid.Row="5" Height="20">
                 <FlowDocument/>
             </RichTextBox>
-            <Button Name="ChangeAccountButton" Grid.Row="5" Grid.Column="1" Height="20" Width="200" MouseLeftButtonUp="ChangeAccountButton_MouseLeftButtonUp">
+            <Button Name="ChangeAccountButton" Grid.Row="5" Grid.Column="1" Height="20" Width="200" Click="ChangeAccount" Margin="9.8,6,56.6,6.8">
                 Change account info
             </Button>
             <ListView Name="AccountBookings" ItemsSource="{Binding}" Grid.Row="7" Grid.RowSpan="8" >

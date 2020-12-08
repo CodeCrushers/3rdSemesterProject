@@ -41,8 +41,8 @@ namespace RESTServices.Controllers {
         [HttpPut]
         public HttpStatusCode Put(Account val) {
             HttpStatusCode code;
+            db.Update(val);
             if(validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
-                db.Update(val);
                 code = HttpStatusCode.Created;
             } else {
                 code = HttpStatusCode.BadRequest;

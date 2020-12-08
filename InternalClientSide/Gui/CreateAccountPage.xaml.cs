@@ -15,22 +15,20 @@ using System.Windows.Shapes;
 using System.Net.Http;
 using InternalClientSide.Model;
 using System.Web.Script.Serialization;
+using InternalClientSide.Controllers;
 
 namespace InternalClientSide.Gui {
     /// <summary>
     /// Interaction logic for CreateAccountPage.xaml
     /// </summary>
     public partial class CreateAccountPage : Page {
-
-
-
-        public HttpClient HttpClient = new HttpClient();
         private StringBuilder stringBuilder;
+        private AccountController accountController;
 
         public CreateAccountPage() {
             InitializeComponent();
             stringBuilder = new StringBuilder();
-            
+            accountController = new AccountController();
         }
 
 
@@ -57,12 +55,8 @@ namespace InternalClientSide.Gui {
                 Phone = phoneNumber,
                 Email = email
             };
-            Console.WriteLine("its here");
-            var json = new JavaScriptSerializer().Serialize(account);
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:44346/api/account", stringContent);
-            // IMPLEMENT API CONNECTION HERE
-            // USE JSON SERIALIZATION
+            accountController.CreateAccount(account);
+            
         }
 
 
