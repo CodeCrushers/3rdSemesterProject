@@ -21,7 +21,7 @@ namespace RESTServices.Controllers {
             return db.GetAll();
         }
 
-        [HttpGet]
+        [HttpGet, Route("{email}")]
         public Account Get(string email) {
             return db.Get(email);
         }

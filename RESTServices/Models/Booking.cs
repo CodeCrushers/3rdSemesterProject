@@ -13,6 +13,5 @@ namespace RESTServices.Models {
         public string EndLocation { get; set; }
         public DateTime BookingDate { get; set; }
         public Car BookingCar { get; set; }
-
     }
 }
