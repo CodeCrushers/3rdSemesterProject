@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "Login Page";
 }
+<%@ Controller Language="C#" AutoEventWireup="true" CodeFile="Controller.cs" Inherits="Controller" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,22 +15,22 @@
     <!--Script-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
-    </asp:ScriptManager>
 </head>
 {
 <div class="login-page">
     <div class="form">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+        </asp:ScriptManager>
         <form class="register-form">
             <input id="nameRegister" type="text" placeholder="name" />
-            <input id="passwordRegister" type="password" placeholder="password" />
+            <input id="passwordRegister" type="text" placeholder="password" />
             <input id="emailRegister" type="text" placeholder="email address" />
             <button>create</button>
             <p class="message">Already registered? <a href="#">Sign In</a></p>
         </form>
         <form class="login-form">
-            <input id="email" type="text" placeholder="Email" />
-            <input id="password" type="text" placeholder="password" />
+            <input id="email" type="text" value="" placeholder="email" />
+            <input id="password" type="text" value="" placeholder="password" />
             <button onclick="LoginButtonPress()" id="loginButton" type="button">login</button>
             <p class="message">Not registered? <a href="#">Create an account</a></p>
         </form>
@@ -151,7 +152,6 @@
         -moz-osx-font-smoothing: grayscale;
     }
 </style>
-</html>
 <script>
     $('.message a').click(function () {
         $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
@@ -160,13 +160,13 @@
         //test
         document.getElementById("loginButton").innerHTML = "knappen virker";
 
-        var email = document.getElementById("email").innerHTML;
-        if (email.length>0) {
+        let email = document.getElementById("email").value;
+        if (email.toString.length > 0) {
             window.alert("du skal lige skrive noget i email");
         }
         console.log("email:" + email);
-        var password = document.getElementById("password").innerHTML;
-        if (password.length>0) {
+        var password = document.getElementById("password").value;
+        if (password.toString.length > 0) {
             window.alert("du skal lige skrive noget i password");
         }
         console.log("password:" + password);
@@ -181,3 +181,5 @@
 
     }
 </script>
+</html>
+

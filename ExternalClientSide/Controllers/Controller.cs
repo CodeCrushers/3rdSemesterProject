@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.UI;
 using System.Web.Script.Services;
 using System.Web.Services;
 
 namespace ExternalClientSide.Controllers
 {
-    public class Controller
+    public partial class Controller : System.Web.UI.Page
     {
-        [ScriptMethod, WebMethod]
-        public static Boolean emailPassworldCheck(String email, string password)
+        [WebMethod]
+        public static Boolean EmailPassworldCheck(String email, string password)
         {
             Boolean ReturnCheck;
             ReturnCheck = false;
@@ -18,11 +19,6 @@ namespace ExternalClientSide.Controllers
             {
                 ReturnCheck = true;
             }
-
-
-
-
-
             return ReturnCheck;
         }
     }

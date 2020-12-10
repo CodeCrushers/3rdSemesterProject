@@ -15,10 +15,6 @@
            type="text"
            placeholder=" location" />
 
-    <input  id="distance"
-            class="controls"
-            type="text"/>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Maps Test</title>
@@ -145,7 +141,7 @@
                 const place = autocomplete.getPlace();
 
                 if (!place.place_id) {
-                    window.alert("Please select an option from the dropdown list.");
+                    window.alert("fejl 1");
                     return;
                 }
 
