@@ -1,5 +1,4 @@
-﻿    using RESTServices.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,6 +8,7 @@ namespace RESTServices.Models {
         public string Brand { get; set; }
 
         public string Model { get; set; }
+
         public string RegistrationNumber { get; set; }
 
         public string LeasingYear { get; set; }
@@ -18,7 +18,5 @@ namespace RESTServices.Models {
         public int Charge { get; set; }
 
         public int Capacity { get; set; }
-        public Manufacturer Manufacturer { get; set; }
-
     }
 }

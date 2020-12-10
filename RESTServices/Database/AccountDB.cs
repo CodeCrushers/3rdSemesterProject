@@ -10,7 +10,7 @@ using System.Web;
 namespace RESTServices.Database {
     public class AccountDB : ICRUD<Account> {
 
-        private static string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private static string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public AccountDB() {
         }
@@ -21,10 +21,11 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber)";
+                        cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        cmd.Parameters.AddWithValue("password", entity.Password);
                         id = (int)cmd.ExecuteScalar();
                     }
                 }
@@ -95,7 +96,7 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT id, name, email, phonenumber FROM Accounts";
+                        cmd.CommandText = "SELECT id, name, email, phonenumber, Password FROM Accounts";
                         var reader = cmd.ExecuteReader();
                         accounts = CreateList(reader);
                     }
@@ -110,11 +111,12 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
+                        cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        cmd.Parameters.AddWithValue("password", entity.Password);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -139,7 +141,8 @@ namespace RESTServices.Database {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
-                Phone = reader.GetString(reader.GetOrdinal("phonenumber"))
+                Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
+                Password = reader.GetString(reader.GetOrdinal("Password"))
             };
             return a;
         }

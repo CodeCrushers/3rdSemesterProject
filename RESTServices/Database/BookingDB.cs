@@ -10,7 +10,7 @@ using System.Configuration;
 namespace RESTServices.Database {
     public class BookingDB : ICRUD<Booking> {
 
-        private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public object Create(Booking entity) {
             object id;
@@ -18,14 +18,15 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocationId, endLocation, bookingDate, bookingRegistrationNumber)"
-                                          + "OUTPUT INSERTED.id VALUES(@payedFor, @paymentAmount, @startLocationId, @endLocation, @bookingDate, @bookingRegistrationNumber)";
+                        cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocationId, endLocation, bookingDate, bookingRegistrationNumber, accountId)"
+                                          + "OUTPUT INSERTED.id VALUES(@payedFor, @paymentAmount, @startLocationId, @endLocation, @bookingDate, @bookingRegistrationNumber, @accountId)";
                         cmd.Parameters.AddWithValue("payedFor", ConvertToBinary(entity.PayedFor));
                         cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
                         cmd.Parameters.AddWithValue("startLocationId", entity.StartLocation);
                         cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
                         cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
                         cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
+                        cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
                         id = cmd.ExecuteScalar();
                         con.Close();
                     }
@@ -49,7 +50,6 @@ namespace RESTServices.Database {
             if (singleRead) {
                 reader.Read();
             }
-            CarDB carDB = new CarDB();
             Booking booking = new Booking() {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
                 //PayedFor = ConvertToBoolean(reader.GetInt32(reader.GetOrdinal("payedFor"))),
@@ -73,6 +73,7 @@ namespace RESTServices.Database {
                             var reader = cmd.ExecuteReader();
                             booking = CreateObject(reader, true);
                             string registrationNumber = reader.GetString(reader.GetOrdinal("bookingRegistrationNumber"));
+                            int accountId = reader.GetInt32(reader.GetOrdinal("accountId"));
                             reader.Close();
                             using (SqlCommand carCmd = con.CreateCommand()) {
                                 carCmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
@@ -80,6 +81,15 @@ namespace RESTServices.Database {
                                 var carReader = carCmd.ExecuteReader();
                                 Car car = CarDB.CreateObject(carReader, true);
                                 booking.BookingCar = car;
+                                carReader.Close();
+                            }
+                            using (SqlCommand accountCmd = con.CreateCommand()) {
+                                accountCmd.CommandText = "SELECT * FORM Accounts WHERE id = @id";
+                                accountCmd.Parameters.AddWithValue("id", accountId);
+                                var accountReader = accountCmd.ExecuteReader();
+                                Account account = AccountDB.CreateObject(accountReader, true);
+                                booking.Account = account;
+                                accountReader.Close();
                             }
                         }
                     }
@@ -108,13 +118,14 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         cmd.CommandText = "UPDATE Booking SET payedFor = @payedFor, paymentAmount = @paymentAmount, startLocationId = @startLocation, endLocation = @endLocation," +
-                            " bookingDate = @bookingDate, bookingRegistrationNumber = @bookingRegistrationNumber WHERE id = @id";
+                            " bookingDate = @bookingDate, bookingRegistrationNumber = @bookingRegistrationNumber, accountId = @accountId WHERE id = @id";
                         cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
                         cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
                         cmd.Parameters.AddWithValue("startLocation", entity.StartLocation);
                         cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
                         cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
                         cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
+                        cmd.Parameters.AddWithValue("accoutnId", entity.Account.Id);
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.ExecuteNonQuery();
                     }

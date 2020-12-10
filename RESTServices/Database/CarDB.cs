@@ -10,7 +10,7 @@ using System.Web;
 namespace RESTServices.Database {
 
     public class CarDB : ICRUD<Car> {
-        private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public object Create(Car entity) {
             object  variable = null;
@@ -43,7 +43,6 @@ namespace RESTServices.Database {
                             var = cmd.ExecuteScalar();
                         }
                     }
-
                 }
             }
             return var;
@@ -113,16 +112,14 @@ namespace RESTServices.Database {
             if (singleRead) {
                 reader.Read();
             }
-            Car car = new Car() {
-                Brand = reader.GetString(reader.GetOrdinal("brand")),
-                Model = reader.GetString(reader.GetOrdinal("model")),
-                RegistrationNumber = reader.GetString(reader.GetOrdinal("registrationNumber")),
-                LeasingYear = reader.GetString(reader.GetOrdinal("leasingYear")),
-                Distance = reader.GetInt32(reader.GetOrdinal("distance")),
-                Charge = reader.GetInt32(reader.GetOrdinal("charge")),
-                Capacity = reader.GetInt32(reader.GetOrdinal("capacity"))
-                
-            };
+            Car car = new Car();
+            car.Brand = reader.GetString(reader.GetOrdinal("brand"));
+            car.Model = reader.GetString(reader.GetOrdinal("model"));
+            car.RegistrationNumber = reader.GetString(reader.GetOrdinal("registrationNumber"));
+            car.LeasingYear = reader.GetString(reader.GetOrdinal("leasingYear"));
+            car.Distance = reader.GetInt32(reader.GetOrdinal("distance"));
+            car.Charge = reader.GetInt32(reader.GetOrdinal("charge"));
+            car.Capacity = reader.GetInt32(reader.GetOrdinal("capacity"));
             return car;
         }
 

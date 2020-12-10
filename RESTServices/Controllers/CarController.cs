@@ -19,9 +19,9 @@ namespace RESTServices.Controllers
             return db.GetAll();
         }
 
-        [HttpGet, Route("{id}")]
-        public Car Get(int id) {
-            return db.Get(id);
+        [HttpGet, Route("{reg}")]
+        public Car Get(string reg) {
+            return db.Get(reg);
         }
 
         [HttpPost]
@@ -30,7 +30,7 @@ namespace RESTServices.Controllers
         }
 
         [HttpPut]
-        public void Pu(Car car) {
+        public void Put(Car car) {
             db.Update(car);
         }
 
