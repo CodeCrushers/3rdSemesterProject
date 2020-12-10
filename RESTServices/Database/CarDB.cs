@@ -10,7 +10,7 @@ using System.Web;
 namespace RESTServices.Database {
 
     public class CarDB : ICRUD<Car> {
-        private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public object Create(Car entity) {
             object  variable = null;

@@ -10,7 +10,7 @@ using System.Configuration;
 namespace RESTServices.Database {
     public class BookingDB : ICRUD<Booking> {
 
-        private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public object Create(Booking entity) {
             object id;

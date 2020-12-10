@@ -10,7 +10,7 @@ using System.Web;
 namespace RESTServices.Database {
     public class AccountDB : ICRUD<Account> {
 
-        private static string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private static string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public AccountDB() {
         }
