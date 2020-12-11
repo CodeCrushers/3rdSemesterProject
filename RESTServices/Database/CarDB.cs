@@ -120,6 +120,7 @@ namespace RESTServices.Database {
             car.Distance = reader.GetInt32(reader.GetOrdinal("distance"));
             car.Charge = reader.GetInt32(reader.GetOrdinal("charge"));
             car.Capacity = reader.GetInt32(reader.GetOrdinal("capacity"));
+            car.Occupied = reader.GetBoolean(reader.GetOrdinal("onRoute"));
             return car;
         }
 

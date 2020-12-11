@@ -7,6 +7,7 @@ using System.Web.Http;
 using RESTServices.Models;
 using RESTServices.Database;
 using System.Web.Http.Results;
+using System.Web.Http.Description;
 
 namespace RESTServices.Controllers {
 
@@ -26,8 +27,13 @@ namespace RESTServices.Controllers {
         }
 
         [HttpPost]
-        public void Post(Booking booking) {
-            db.Create(booking);
+        public HttpResponseMessage Post(Booking booking) {
+            var response = new HttpResponseMessage(HttpStatusCode.Conflict);
+            var o = db.Create(booking);
+            if (o != null || o is int) {
+                response.StatusCode = HttpStatusCode.Created;
+            }
+            return response;
         }
 
         [HttpPut]

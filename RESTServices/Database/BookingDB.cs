@@ -13,25 +13,43 @@ namespace RESTServices.Database {
         private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public object Create(Booking entity) {
-            object id;
+            object id = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocationId, endLocation, bookingDate, bookingRegistrationNumber, accountId)"
-                                          + "OUTPUT INSERTED.id VALUES(@payedFor, @paymentAmount, @startLocationId, @endLocation, @bookingDate, @bookingRegistrationNumber, @accountId)";
-                        cmd.Parameters.AddWithValue("payedFor", ConvertToBinary(entity.PayedFor));
-                        cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
-                        cmd.Parameters.AddWithValue("startLocationId", entity.StartLocation);
-                        cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
-                        cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
-                        cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
-                        cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
-                        id = cmd.ExecuteScalar();
-                        con.Close();
+                    using (SqlCommand carCmd = con.CreateCommand()) {
+                        carCmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                        carCmd.Parameters.AddWithValue("registrationNumber", entity.BookingCar.RegistrationNumber);
+                        var carReader = carCmd.ExecuteReader();
+                        Car car = CarDB.CreateObject(carReader, true);
+                        carReader.Close();
+                        if (car.Occupied == false) {
+                            car.Occupied = true;
+                            using (SqlCommand carUpdateCommand = con.CreateCommand()) {
+                                carUpdateCommand.CommandText = "UPDATE Cars SET onRoute = @onRoute WHERE registrationNumber = @registrationNumber";
+                                carUpdateCommand.Parameters.AddWithValue("onRoute", car.Occupied);
+                                carUpdateCommand.Parameters.AddWithValue("registrationNumber", car.RegistrationNumber);
+                                carUpdateCommand.ExecuteNonQuery(); 
+                            }
+                            using (SqlCommand cmd = con.CreateCommand()) {
+                                cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocationId, endLocation, bookingDate, bookingRegistrationNumber, accountId)"
+                                                  + "OUTPUT INSERTED.id VALUES(@payedFor, @paymentAmount, @startLocationId, @endLocation, @bookingDate, @bookingRegistrationNumber, @accountId)";
+                                cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
+                                cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
+                                cmd.Parameters.AddWithValue("startLocationId", entity.StartLocation);
+                                cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
+                                cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
+                                cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
+                                cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
+                                id = cmd.ExecuteScalar();
+                                con.Close();
+                            }  
+                            scope.Complete();
+                        } else {
+                            scope.Dispose();
+                        }
                     }
                 }
-                scope.Complete();
             }
             return id;
 
@@ -52,7 +70,7 @@ namespace RESTServices.Database {
             }
             Booking booking = new Booking() {
                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                //PayedFor = ConvertToBoolean(reader.GetInt32(reader.GetOrdinal("payedFor"))),
+                PayedFor = reader.GetBoolean(reader.GetOrdinal("payedFor")),
                 PaymentAmount = reader.GetDouble(reader.GetOrdinal("paymentAmount")),
                 StartLocation = reader.GetString(reader.GetOrdinal("startLocationId")),
                 EndLocation = reader.GetString(reader.GetOrdinal("endLocation")),
@@ -150,22 +168,6 @@ namespace RESTServices.Database {
                 } 
             }
             return o;
-        }
-
-        public int ConvertToBinary(bool boolean) {
-            int result = 0;
-            if (boolean) {
-                result = 1;
-            }
-            return result;
-        }
-
-        public bool ConvertToBoolean(int binary) {
-            bool result = false;
-            if (binary == 1) {
-                result = true;
-            }
-            return result;
         }
     }
 }

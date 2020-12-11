@@ -18,5 +18,7 @@ namespace RESTServices.Models {
         public int Charge { get; set; }
 
         public int Capacity { get; set; }
+
+        public bool Occupied { get; set; }
     }
 }
