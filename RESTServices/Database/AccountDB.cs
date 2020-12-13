@@ -16,42 +16,28 @@ namespace RESTServices.Database {
         }
 
         public object Create(Account entity) {
-            int id;
+            object o = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
-                        cmd.Parameters.AddWithValue("name", entity.Name);
-                        cmd.Parameters.AddWithValue("email", entity.Email);
-                        cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("password", entity.Password);
-                        id = (int)cmd.ExecuteScalar();
+                        try {
+                            cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
+                            cmd.Parameters.AddWithValue("name", entity.Name);
+                            cmd.Parameters.AddWithValue("email", entity.Email);
+                            cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                            cmd.Parameters.AddWithValue("password", entity.Password);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception) {
+                            o = false;
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
             }
-            return id;
-        }
-
-        public object Delete(object var) {
-            Object o = null;
-            if (var is int) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", var);
-                            o = cmd.ExecuteScalar();
-                        }
-                    }
-                    scope.Complete();
-                } 
-            }
             return o;
         }
-
         public Account Get(object var) {
             Account account = null;
             if (var is int) {
@@ -80,9 +66,7 @@ namespace RESTServices.Database {
                         cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
                         cmd.Parameters.AddWithValue("email", email);
                         var reader = cmd.ExecuteReader();
-                        if (reader != null) {
-                            account = CreateObject(reader, true);
-                        }
+                        account = CreateObject(reader, true);
                     }
                 }
                 scope.Complete();
@@ -91,12 +75,12 @@ namespace RESTServices.Database {
         }
 
         public IEnumerable<Account> GetAll() {
-            IEnumerable<Account> accounts;
+            IEnumerable<Account> accounts = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT id, name, email, phonenumber, Password FROM Accounts";
+                        cmd.CommandText = "SELECT id, name, email, phonenumber FROM Accounts";
                         var reader = cmd.ExecuteReader();
                         accounts = CreateList(reader);
                     }
@@ -106,25 +90,55 @@ namespace RESTServices.Database {
             return accounts;
         }
 
-        public void Update(Account entity) {
+        public bool Update(Account entity) {
+            bool result = true;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
-                        cmd.Parameters.AddWithValue("id", entity.Id);
-                        cmd.Parameters.AddWithValue("name", entity.Name);
-                        cmd.Parameters.AddWithValue("email", entity.Email);
-                        cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("password", entity.Password);
-                        cmd.ExecuteNonQuery();
+                        try {
+                            cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", entity.Id);
+                            cmd.Parameters.AddWithValue("name", entity.Name);
+                            cmd.Parameters.AddWithValue("email", entity.Email);
+                            cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                            cmd.Parameters.AddWithValue("password", entity.Password);
+                            cmd.ExecuteNonQuery();
+                        } catch (Exception) {
+                            result = false;
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
             }
+            return result;
         }
 
-        public IEnumerable<Account> CreateList(SqlDataReader reader) {
+        public object Delete(object var) {
+            object o = null;
+            if (var is int) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            try {
+                                cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
+                                cmd.Parameters.AddWithValue("id", var);
+                                o = cmd.ExecuteScalar();
+                            } catch (Exception) {
+                                o = false;
+                                scope.Dispose();
+                            }
+                        }
+                    }
+                    scope.Complete();
+                }
+            }
+            return o;
+        }
+
+        public static IEnumerable<Account> CreateList(SqlDataReader reader) {
             List<Account> accounts = new List<Account>();
             while(reader.Read()) {
                 Account a = CreateObject(reader, false);
