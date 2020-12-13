@@ -10,42 +10,41 @@ using System.Web;
 namespace RESTServices.Database {
 
     public class CarDB : ICRUD<Car> {
+
         private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
+        public CarDB() {
+
+        }
+
         public object Create(Car entity) {
-            object  variable = null;
+            object o = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber) OUTPUT INSERTED.registrationNumber VALUES (@brand, @model, @registrationNumber) ";
-                        cmd.Parameters.AddWithValue("brand", entity.Brand);
-                        cmd.Parameters.AddWithValue("model", entity.Model);
-                        cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
-                        variable = cmd.ExecuteScalar();
+                        try {
+                            cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber, leasingYear, distance, charge, capacity, locationId, onRoute) OUTPUT INSERTED.registrationNumber " +
+                                "VALUES (@brand, @model, @registrationNumber, @leasingYear, @distance, @charge, @capacity, @locationId, @onRoute)";
+                            cmd.Parameters.AddWithValue("brand", entity.Brand);
+                            cmd.Parameters.AddWithValue("model", entity.Model);
+                            cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
+                            cmd.Parameters.AddWithValue("leasingYear", entity.LeasingYear);
+                            cmd.Parameters.AddWithValue("distance", entity.Distance);
+                            cmd.Parameters.AddWithValue("charge", entity.Charge);
+                            cmd.Parameters.AddWithValue("capacity", entity.Capacity);
+                            cmd.Parameters.AddWithValue("locationId", entity.LocationId);
+                            cmd.Parameters.AddWithValue("onRoute", entity.OnRoute);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception) {
+                            o = false;
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
             }
-            return variable;
-        }
-
-
-        public object Delete(object reg) {
-            object var = null;
-            if (reg is string) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "DELETE FROM Cars OUTPUT DELETED.id WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", reg);
-                            var = cmd.ExecuteScalar();
-                        }
-                    }
-                }
-            }
-            return var;
+            return o;
         }
 
         public Car Get(object var) {
@@ -55,27 +54,35 @@ namespace RESTServices.Database {
                     using (SqlConnection con = new SqlConnection(_connectionString)) {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
-                            cmd.Parameters.AddWithValue("registrationNumber", var);
-                            var reader = cmd.ExecuteReader();
-                            car = CreateObject(reader, true);
+                            try {
+                                cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                                cmd.Parameters.AddWithValue("registrationNumber", var);
+                                var reader = cmd.ExecuteReader();
+                                car = CreateObject(reader, true);
+                            } catch (Exception) {
+                                scope.Dispose();
+                            }
                         }
                     }
                     scope.Complete();
-                } 
+                }
             }
             return car;
         }
 
         public IEnumerable<Car> GetAll() {
             IEnumerable<Car> list = null;
-            using(TransactionScope scope = new TransactionScope()) {
-                using(SqlConnection con = new SqlConnection(_connectionString)) {
+            using (TransactionScope scope = new TransactionScope()) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
-                    using(SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Cars";
-                        var reader = cmd.ExecuteReader();
-                        list = CreateList(reader);
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "SELECT * FROM Cars";
+                            var reader = cmd.ExecuteReader();
+                            list = CreateList(reader);
+                        } catch (Exception) {
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
@@ -83,22 +90,64 @@ namespace RESTServices.Database {
             return list;
         }
 
-        public void Update(Car entity) {
+        public bool Update(Car entity) {
+            bool result = true;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "UPDATE Cars SET brand = @brand, model = @model, registrationNumber = @registrationNumber";
-                        cmd.Parameters.AddWithValue("brand", entity.Brand);
-                        cmd.Parameters.AddWithValue("model", entity.Model);
-                        cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
-                        cmd.ExecuteNonQuery();
+                        try {
+                            cmd.CommandText = "UPDATE Cars SET " +
+                                                "brand = @brand, model = @model, leasingYear = @leasingYear, distance = @distance, charge = @charge, capacity = @capacity, locationId = @locationId, onRoute = @onRoute " +
+                                                "WHERE registrationNumber = @registrationNumber";
+                            cmd.Parameters.AddWithValue("brand", entity.Brand);
+                            cmd.Parameters.AddWithValue("model", entity.Model);
+                            cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
+                            cmd.Parameters.AddWithValue("leasingYear", entity.LeasingYear);
+                            cmd.Parameters.AddWithValue("distance", entity.Distance);
+                            cmd.Parameters.AddWithValue("charge", entity.Charge);
+                            cmd.Parameters.AddWithValue("capacity", entity.Capacity);
+                            cmd.Parameters.AddWithValue("locationId", entity.LocationId);
+                            cmd.Parameters.AddWithValue("onRoute", entity.OnRoute);
+                            cmd.ExecuteNonQuery();
+                        } catch (Exception) {
+                            result = false;
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
             }
+            return result;
         }
 
+        public object Delete(object reg) {
+            object o = null;
+            if (reg is string) {
+                using (TransactionScope scope = new TransactionScope()) {
+                    using (SqlConnection con = new SqlConnection(_connectionString)) {
+                        con.Open();
+                        using (SqlCommand cmd = con.CreateCommand()) {
+                            try {
+                                cmd.CommandText = "DELETE FROM Cars OUTPUT DELETED.id WHERE id = @id";
+                                cmd.Parameters.AddWithValue("id", reg);
+                                o = cmd.ExecuteScalar();
+                            } catch (Exception) {
+                                o = false;
+                                scope.Dispose();
+                            }
+                        }
+                    }
+                }
+            } else {
+                o = false;
+            }
+            return o;
+        }
+
+        /*
+         * These methods below are here to create objects of type of this DB class
+         */
         public IEnumerable<Car> CreateList(SqlDataReader reader) {
             List<Car> bookings = new List<Car>();
             while (reader.Read()) {
@@ -120,7 +169,7 @@ namespace RESTServices.Database {
             car.Distance = reader.GetInt32(reader.GetOrdinal("distance"));
             car.Charge = reader.GetInt32(reader.GetOrdinal("charge"));
             car.Capacity = reader.GetInt32(reader.GetOrdinal("capacity"));
-            car.Occupied = reader.GetBoolean(reader.GetOrdinal("onRoute"));
+            car.OnRoute = reader.GetBoolean(reader.GetOrdinal("onRoute"));
             return car;
         }
 

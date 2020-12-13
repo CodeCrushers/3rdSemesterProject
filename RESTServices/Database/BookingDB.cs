@@ -23,11 +23,11 @@ namespace RESTServices.Database {
                         var carReader = carCmd.ExecuteReader();
                         Car car = CarDB.CreateObject(carReader, true);
                         carReader.Close();
-                        if (car.Occupied == false) {
-                            car.Occupied = true;
+                        if (car.OnRoute == false) {
+                            car.OnRoute = true;
                             using (SqlCommand carUpdateCommand = con.CreateCommand()) {
                                 carUpdateCommand.CommandText = "UPDATE Cars SET onRoute = @onRoute WHERE registrationNumber = @registrationNumber";
-                                carUpdateCommand.Parameters.AddWithValue("onRoute", car.Occupied);
+                                carUpdateCommand.Parameters.AddWithValue("onRoute", car.OnRoute);
                                 carUpdateCommand.Parameters.AddWithValue("registrationNumber", car.RegistrationNumber);
                                 carUpdateCommand.ExecuteNonQuery(); 
                             }
@@ -130,7 +130,7 @@ namespace RESTServices.Database {
             return bookings;
         }
 
-        public void Update(Booking entity) {
+        public bool Update(Booking entity) {
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
@@ -150,6 +150,7 @@ namespace RESTServices.Database {
                 }
                 scope.Complete();
             }
+            throw new NotImplementedException();
         }
 
         public object Delete(object var) {
