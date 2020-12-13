@@ -163,12 +163,12 @@ namespace ExternalClientSide.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    
                     Account account = new Account {
+                        Id = user.Id,
                         Name = model.Name,
                         Phone = model.PhoneNumber,
                         Email = model.Email,
-                        Password = model.Password
+                        Password = user.PasswordHash
 
                     };
                     CreateAccount(account);

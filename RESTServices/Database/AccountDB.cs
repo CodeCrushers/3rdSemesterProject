@@ -22,19 +22,22 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
+                            cmd.CommandText = "INSERT INTO Accounts (id ,name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@id,@name, @email, @phonenumber, @password)";
+                            cmd.Parameters.AddWithValue("id", entity.Id);
                             cmd.Parameters.AddWithValue("name", entity.Name);
                             cmd.Parameters.AddWithValue("email", entity.Email);
                             cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
                             cmd.Parameters.AddWithValue("password", entity.Password);
                             o = cmd.ExecuteScalar();
-                        } catch (Exception) {
+                        } catch (Exception e) {
                             o = false;
+                            Console.WriteLine(e.Message);
                             scope.Dispose();
+                            
                         }
                     }
                 }
-                scope.Complete();
+                scope.Complete();   
             }
             return o;
         }
@@ -169,7 +172,7 @@ namespace RESTServices.Database {
                 reader.Read();
             }
             Account a = new Account() {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Id = reader.GetString(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
