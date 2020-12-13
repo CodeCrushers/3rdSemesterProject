@@ -22,13 +22,15 @@ namespace RESTServices.LogicLayer {
 
         public bool CreateBooking(Booking entity) {
             bool result = false;
-            object o = this._bookingDB.Create(entity);
-            if (o is int) {
-                result = true;
-            } else if (o is bool) {
-                if ((bool)o == false) {
-                    result = false;
+            using (TransactionScope scope = new TransactionScope()) {
+                Car car = _carDB.Get(entity.BookingCar.RegistrationNumber);
+                if(car.OnRoute == false) {
+                    object o = this._bookingDB.Create(entity);
+                    result = true;
+                } else {
+                    scope.Dispose();
                 }
+                scope.Complete();
             }
             return result;
         }
@@ -39,18 +41,17 @@ namespace RESTServices.LogicLayer {
                 booking = _bookingDB.Get(id);
                 Car car = _carDB.Get(booking.BookingCar.RegistrationNumber);
                 Account account = _accountDB.Get(booking.Account.Id);
-                if (car != null && car.OnRoute == false) {
+                if (car != null) {
                     booking.BookingCar = car;
-                    scope.Complete();
                 } else {
                     scope.Dispose();
                 }
                 if (account != null) {
                     booking.Account = account;
-                    scope.Complete();
                 } else {
                     scope.Dispose();
                 }
+                scope.Complete();
             }
             return booking;
         }
