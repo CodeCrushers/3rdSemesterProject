@@ -9,48 +9,35 @@ using System.Web.Http;
 
 namespace RESTServices.Controllers
 {
-    [RoutePrefix("api/car")]
+    [RoutePrefix("api/Car")]
     public class CarController : ApiController {
 
-        /*
-        private CarDB _carDB = new CarDB();
-
-        public void Create(Car entity) {
-            _carDB.Create(entity);
-        }
-
-        public void Delete(int id) {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Car> GetAll() {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Car entity) {
-            throw new NotImplementedException();
-        }
-
-        Car ICRUD<Car>.Get(int id) {
-            throw new NotImplementedException();
-        }*/
+        CarDB db = new CarDB();
 
         [HttpGet]
-        public string Get() {
-            return "Hello World";
+        public IEnumerable<Car> Get() {
+            return db.GetAll();
         }
 
-        [HttpGet, Route("{name}")]
-        public string Get(string name) {
-            string helloString = "Hello " + name;
-            return helloString;
+        [HttpGet, Route("{reg}")]
+        public Car Get(string reg) {
+            return db.Get(reg);
         }
 
-        [HttpGet, Route("{id}")]
-        public string Get(int id) {
-            return null;
+        [HttpPost]
+        public void Post(Car car) {
+            db.Create(car);
         }
 
+        [HttpPut]
+        public void Put(Car car) {
+            db.Update(car);
+        }
+
+        [HttpDelete, Route("{id}")]
+        public void Delete(int id) {
+            db.Delete(id);
+        }
     }
 
 }
