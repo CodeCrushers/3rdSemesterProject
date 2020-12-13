@@ -23,11 +23,11 @@ namespace RESTServices.Database {
                         var carReader = carCmd.ExecuteReader();
                         Car car = CarDB.CreateObject(carReader, true);
                         carReader.Close();
-                        if (car.Occupied == false) {
-                            car.Occupied = true;
+                        if (car.OnRoute == false) {
+                            car.OnRoute = true;
                             using (SqlCommand carUpdateCommand = con.CreateCommand()) {
                                 carUpdateCommand.CommandText = "UPDATE Cars SET onRoute = @onRoute WHERE registrationNumber = @registrationNumber";
-                                carUpdateCommand.Parameters.AddWithValue("onRoute", car.Occupied);
+                                carUpdateCommand.Parameters.AddWithValue("onRoute", car.OnRoute);
                                 carUpdateCommand.Parameters.AddWithValue("registrationNumber", car.RegistrationNumber);
                                 carUpdateCommand.ExecuteNonQuery(); 
                             }

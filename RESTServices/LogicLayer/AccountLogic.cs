@@ -8,15 +8,15 @@ using System.Web;
 namespace RESTServices.LogicLayer {
     public class AccountLogic {
 
-        private AccountDB AccountDB;
+        private readonly AccountDB _accountDB;
 
         public AccountLogic() {
-            this.AccountDB = new AccountDB();
+            this._accountDB = new AccountDB();
         }
 
         public bool CreateAccount(Account entity) {
             bool result = false;
-            object o = this.AccountDB.Create(entity);
+            object o = this._accountDB.Create(entity);
             if(o is int) {
                 result = true;
             } else if(o is bool) {
@@ -26,26 +26,28 @@ namespace RESTServices.LogicLayer {
             }
             return result;
         }
+
         public Account GetAccount(string mail) {
             Account account = null;
-            account = this.AccountDB.Get(mail);
+            account = this._accountDB.Get(mail);
             return account;
         }
+
         public IEnumerable<Account> GetAllAccounts() {
             IEnumerable<Account> list = null;
-            list = this.AccountDB.GetAll();
+            list = this._accountDB.GetAll();
             return list;
         }
 
         public bool EditAccount(Account entity) {
             bool result = false;
-            result = this.AccountDB.Update(entity);
+            result = this._accountDB.Update(entity);
             return result;
         }
 
         public bool DeleteAccount(int id) {
             bool result = false;
-            object o = this.AccountDB.Delete(id);
+            object o = this._accountDB.Delete(id);
             if (o is int) {
                 result = true;
             } else if (o is bool) {

@@ -46,10 +46,14 @@ namespace RESTServices.Database {
                     using (SqlConnection con = new SqlConnection(_connectionString)) {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", var);
-                            var reader = cmd.ExecuteReader();
-                            account = CreateObject(reader, true);
+                            try {
+                                cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
+                                cmd.Parameters.AddWithValue("id", var);
+                                var reader = cmd.ExecuteReader();
+                                account = CreateObject(reader, true);
+                            } catch (Exception) {
+                                scope.Dispose();
+                            }
                         }
                     }
                     scope.Complete();
@@ -63,10 +67,14 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
-                        cmd.Parameters.AddWithValue("email", email);
-                        var reader = cmd.ExecuteReader();
-                        account = CreateObject(reader, true);
+                        try {
+                            cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
+                            cmd.Parameters.AddWithValue("email", email);
+                            var reader = cmd.ExecuteReader();
+                            account = CreateObject(reader, true);
+                        } catch (Exception) {
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
@@ -80,9 +88,13 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT id, name, email, phonenumber, password FROM Accounts";
-                        var reader = cmd.ExecuteReader();
-                        accounts = CreateList(reader);
+                        try {
+                            cmd.CommandText = "SELECT * FROM Accounts";
+                            var reader = cmd.ExecuteReader();
+                            accounts = CreateList(reader);
+                        } catch (Exception) {
+                            scope.Dispose();
+                        }
                     }
                 }
                 scope.Complete();
@@ -134,12 +146,14 @@ namespace RESTServices.Database {
                     }
                     scope.Complete();
                 }
+            } else {
+                o = false;
             }
             return o;
         }
 
         /*
-         * 
+         * These methods below are here to create objects of type of this DB class
          */
         public static IEnumerable<Account> CreateList(SqlDataReader reader) {
             List<Account> accounts = new List<Account>();

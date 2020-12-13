@@ -19,6 +19,8 @@ namespace RESTServices.Models {
 
         public int Capacity { get; set; }
 
-        public bool Occupied { get; set; }
+        public string LocationId { get; set; }
+
+        public bool OnRoute { get; set; }
     }
 }
