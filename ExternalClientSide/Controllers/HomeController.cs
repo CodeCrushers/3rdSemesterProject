@@ -4,25 +4,20 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace ExternalClientSide.Controllers
-{
-    public class HomeController : Controller
-    {
-        public ActionResult Index()
-        {
+namespace ExternalClientSide.Controllers {
+    public class HomeController : Controller {
+        public ActionResult Index() {
             return View();
         }
 
-        public ActionResult About()
-        {
+        public ActionResult About() {
             ViewBag.Message = "Your application description page.";
 
             return View();
         }
 
-        public ActionResult LoginPage()
-        {
-            ViewBag.Message = "Your Login Page";
+        public ActionResult Contact() {
+            ViewBag.Message = "Your contact page.";
 
             return View();
         }
