@@ -93,7 +93,7 @@ namespace ExternalClientSide.Controllers
 
         //
         // GET: /Account/VerifyCode
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
             // Require that the user has already logged in via username/password or external login
@@ -107,7 +107,7 @@ namespace ExternalClientSide.Controllers
         //
         // POST: /Account/VerifyCode
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
@@ -284,7 +284,7 @@ namespace ExternalClientSide.Controllers
 
         //
         // GET: /Account/SendCode
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
             var userId = await SignInManager.GetVerifiedUserIdAsync();
@@ -300,7 +300,7 @@ namespace ExternalClientSide.Controllers
         //
         // POST: /Account/SendCode
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
         {
