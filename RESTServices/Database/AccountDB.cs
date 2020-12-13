@@ -38,6 +38,7 @@ namespace RESTServices.Database {
             }
             return o;
         }
+
         public Account Get(object var) {
             Account account = null;
             if (var is int) {
@@ -56,7 +57,6 @@ namespace RESTServices.Database {
             }
             return account;
         }
-
         public Account Get(string email) {
             Account account = null;
             using (TransactionScope scope = new TransactionScope()) {
@@ -80,7 +80,7 @@ namespace RESTServices.Database {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT id, name, email, phonenumber FROM Accounts";
+                        cmd.CommandText = "SELECT id, name, email, phonenumber, password FROM Accounts";
                         var reader = cmd.ExecuteReader();
                         accounts = CreateList(reader);
                     }
@@ -138,6 +138,9 @@ namespace RESTServices.Database {
             return o;
         }
 
+        /*
+         * 
+         */
         public static IEnumerable<Account> CreateList(SqlDataReader reader) {
             List<Account> accounts = new List<Account>();
             while(reader.Read()) {

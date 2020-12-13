@@ -130,7 +130,7 @@ namespace RESTServices.Database {
             return bookings;
         }
 
-        public void Update(Booking entity) {
+        public bool Update(Booking entity) {
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
@@ -150,6 +150,7 @@ namespace RESTServices.Database {
                 }
                 scope.Complete();
             }
+            throw new NotImplementedException();
         }
 
         public object Delete(object var) {

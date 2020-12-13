@@ -83,7 +83,7 @@ namespace RESTServices.Database {
             return list;
         }
 
-        public void Update(Car entity) {
+        public bool Update(Car entity) {
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
@@ -97,6 +97,7 @@ namespace RESTServices.Database {
                 }
                 scope.Complete();
             }
+            throw new NotImplementedException();
         }
 
         public IEnumerable<Car> CreateList(SqlDataReader reader) {
