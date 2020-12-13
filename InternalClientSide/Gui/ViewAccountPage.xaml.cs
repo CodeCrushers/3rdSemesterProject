@@ -43,10 +43,8 @@ namespace InternalClientSide.Gui {
         }
 
         private void GetAccount(object sender, RoutedEventArgs e) {
-            Console.WriteLine("in here");
             string email = GetText(EmailInput.Document);
             string fullUrl = baseurl + "account?email=" + email;
-            Console.WriteLine(fullUrl);
             var response = HttpClient.GetAsync(fullUrl).Result;
             response.EnsureSuccessStatusCode();
             Account account = response.Content.ReadAsAsync<Account>().Result;

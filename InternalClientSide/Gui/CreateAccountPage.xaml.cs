@@ -61,8 +61,6 @@ namespace InternalClientSide.Gui {
             var json = new JavaScriptSerializer().Serialize(account);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var response = HttpClient.PostAsync("https://localhost:44346/api/account", stringContent);
-            // IMPLEMENT API CONNECTION HERE
-            // USE JSON SERIALIZATION
         }
 
 
