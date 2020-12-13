@@ -84,7 +84,8 @@ namespace ExternalClientSide.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+
+            switch (result )
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(returnUrl);
@@ -97,6 +98,12 @@ namespace ExternalClientSide.Controllers
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
+        }
+
+        private Account GetAccount(string email) {
+
+
+            return new Account();
         }
 
         //
