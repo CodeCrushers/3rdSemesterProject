@@ -64,6 +64,17 @@ namespace ExternalClientSide.Models
 
     public class RegisterViewModel
     {
+
+        [Required]
+        [StringLength(30, ErrorMessage = "Name must be atleast 2 characters", MinimumLength = 2)]
+        [Display(Name = "Name")]
+        public string Name { get; set; }
+
+        [Required]
+        [StringLength(8, ErrorMessage = "Phonenumber must be 8 characters", MinimumLength = 8)]
+        [Display(Name = "PhoneNumber")]
+        public string PhoneNumber { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

@@ -9,6 +9,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using ExternalClientSide.Models;
+using ExternalClientSide.ObjectModels;
+using System.Web.Script.Serialization;
+using System.Net.Http;
+using System.Text;
 
 namespace ExternalClientSide.Controllers
 {
@@ -17,6 +21,8 @@ namespace ExternalClientSide.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private HttpClient HttpClient { get; set; } = new HttpClient();
+        private string BaseUrl { get; set; } = "https://localhost:44346/api/";
 
         public AccountController()
         {
@@ -51,6 +57,8 @@ namespace ExternalClientSide.Controllers
                 _userManager = value;
             }
         }
+
+
 
         //
         // GET: /Account/Login
@@ -151,10 +159,19 @@ namespace ExternalClientSide.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Name, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    
+                    Account account = new Account {
+                        Name = model.Name,
+                        Phone = model.PhoneNumber,
+                        Email = model.Email,
+                        Password = model.Password
+
+                    };
+                    CreateAccount(account);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -170,6 +187,13 @@ namespace ExternalClientSide.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        private void CreateAccount(Account account) {
+            var json = new JavaScriptSerializer().Serialize(account);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = HttpClient.PostAsync(BaseUrl + "account", stringContent);
+
         }
 
         //
