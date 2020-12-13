@@ -39,13 +39,18 @@ namespace RESTServices.LogicLayer {
                 booking = _bookingDB.Get(id);
                 Car car = _carDB.Get(booking.BookingCar.RegistrationNumber);
                 Account account = _accountDB.Get(booking.Account.Id);
-                if (car != null) {
+                if (car != null && car.OnRoute == false) {
                     booking.BookingCar = car;
+                    scope.Complete();
+                } else {
+                    scope.Dispose();
                 }
                 if (account != null) {
                     booking.Account = account;
+                    scope.Complete();
+                } else {
+                    scope.Dispose();
                 }
-                scope.Complete();
             }
             return booking;
         }
