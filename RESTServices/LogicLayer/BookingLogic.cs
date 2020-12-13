@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 
 namespace RESTServices.LogicLayer {
@@ -34,17 +35,17 @@ namespace RESTServices.LogicLayer {
 
         public Booking GetBooking(string id) {
             Booking booking = null;
-            SqlDataReader reader = _bookingDB.Get(id);
-            if(reader != null) {
-                booking = BookingDB.CreateObject(reader, true);
-                Car car = _carDB.Get(reader.GetString(reader.GetOrdinal("carRegistrationNumber")));
-                Account account = _accountDB.Get(reader.GetString(reader.GetOrdinal("accountId")));
-                if(car != null) {
+            using (TransactionScope scope = new TransactionScope()) {
+                booking = _bookingDB.Get(id);
+                Car car = _carDB.Get(booking.BookingCar.RegistrationNumber);
+                Account account = _accountDB.Get(booking.Account.Id);
+                if (car != null) {
                     booking.BookingCar = car;
                 }
-                if(account != null) {
+                if (account != null) {
                     booking.Account = account;
                 }
+                scope.Complete();
             }
             return booking;
         }

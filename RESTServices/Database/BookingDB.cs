@@ -40,16 +40,17 @@ namespace RESTServices.Database {
             return o;
         }
 
-        public SqlDataReader Get(string id) {
-            SqlDataReader reader = null;
+        public Booking Get(string id) {
+            Booking booking = null;
             using (TransactionScope scope = new TransactionScope()) {
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using(SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "SELECT * FROM Car WHERE id = @id";
+                            cmd.CommandText = "SELECT * FROM Booking WHERE id = @id";
                             cmd.Parameters.AddWithValue("id", id);
-                            reader = cmd.ExecuteReader();
+                            var reader = cmd.ExecuteReader();
+                            booking = CreateObject(reader, true);
                         } catch (Exception) {
                             scope.Dispose();
                         }
@@ -57,7 +58,7 @@ namespace RESTServices.Database {
                 }
                 scope.Complete();
             }
-            return reader;
+            return booking;
         }
 
         public IEnumerable<Booking> GetAll() {
@@ -158,6 +159,8 @@ namespace RESTServices.Database {
                 StartLocation = reader.GetString(reader.GetOrdinal("startLocation")),
                 EndLocation = reader.GetString(reader.GetOrdinal("endLocation")),
                 BookingDate = reader.GetDateTime(reader.GetOrdinal("bookingDate")),
+                Account = new Account() { Id = reader.GetString(reader.GetOrdinal("accountId"))},
+                BookingCar = new Car() { RegistrationNumber = reader.GetString(reader.GetOrdinal("carRegistrationNumber")) }
             };
             return booking;
         }

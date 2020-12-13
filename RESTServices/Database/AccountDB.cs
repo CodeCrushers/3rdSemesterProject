@@ -60,6 +60,7 @@ namespace RESTServices.Database {
             return account;
         }
 
+        /*
         public Account Get(string email) {
             Account account = null;
             using (TransactionScope scope = new TransactionScope()) {
@@ -80,6 +81,7 @@ namespace RESTServices.Database {
             }
             return account;
         }
+        */
 
         public IEnumerable<Account> GetAll() {
             IEnumerable<Account> accounts = null;
