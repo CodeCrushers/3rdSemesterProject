@@ -17,7 +17,7 @@ namespace RESTServices.LogicLayer {
         public bool CreateAccount(Account entity) {
             bool result = false;
             object o = this._accountDB.Create(entity);
-            if(o is int) {
+            if(o is string) {
                 result = true;
             } else if(o is bool) {
                 if((bool)o == false) {
@@ -45,10 +45,10 @@ namespace RESTServices.LogicLayer {
             return result;
         }
 
-        public bool DeleteAccount(int id) {
+        public bool DeleteAccount(string id) {
             bool result = false;
             object o = this._accountDB.Delete(id);
-            if (o is int) {
+            if (o is string) {
                 result = true;
             } else if (o is bool) {
                 if ((bool)o == false) {

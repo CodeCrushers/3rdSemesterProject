@@ -12,9 +12,6 @@ namespace RESTServices.Database {
 
         private static string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        public AccountDB() {
-        }
-
         public object Create(Account entity) {
             object o = null;
             using (TransactionScope scope = new TransactionScope()) {
@@ -22,7 +19,8 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
+                            cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber, @password)";
+                            cmd.Parameters.AddWithValue("id", entity.Id);
                             cmd.Parameters.AddWithValue("name", entity.Name);
                             cmd.Parameters.AddWithValue("email", entity.Email);
                             cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
@@ -41,13 +39,13 @@ namespace RESTServices.Database {
 
         public Account Get(object var) {
             Account account = null;
-            if (var is int) {
+            if (var is string) {
                 using (TransactionScope scope = new TransactionScope()) {
                     using (SqlConnection con = new SqlConnection(_connectionString)) {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
                             try {
-                                cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
+                                cmd.CommandText = "SELECT * FROM Account WHERE id = @id";
                                 cmd.Parameters.AddWithValue("id", var);
                                 var reader = cmd.ExecuteReader();
                                 account = CreateObject(reader, true);
@@ -61,6 +59,7 @@ namespace RESTServices.Database {
             }
             return account;
         }
+
         public Account Get(string email) {
             Account account = null;
             using (TransactionScope scope = new TransactionScope()) {
@@ -68,7 +67,7 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
+                            cmd.CommandText = "SELECT * FROM Account WHERE email = @email";
                             cmd.Parameters.AddWithValue("email", email);
                             var reader = cmd.ExecuteReader();
                             account = CreateObject(reader, true);
@@ -89,7 +88,7 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "SELECT * FROM Accounts";
+                            cmd.CommandText = "SELECT * FROM Account";
                             var reader = cmd.ExecuteReader();
                             accounts = CreateList(reader);
                         } catch (Exception) {
@@ -109,7 +108,7 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
+                            cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
                             cmd.Parameters.AddWithValue("id", entity.Id);
                             cmd.Parameters.AddWithValue("name", entity.Name);
                             cmd.Parameters.AddWithValue("email", entity.Email);
@@ -129,13 +128,13 @@ namespace RESTServices.Database {
 
         public object Delete(object var) {
             object o = null;
-            if (var is int) {
+            if (var is string) {
                 using (TransactionScope scope = new TransactionScope()) {
                     using (SqlConnection con = new SqlConnection(_connectionString)) {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
                             try {
-                                cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
+                                cmd.CommandText = "DELETE FROM Account OUTPUT DELETED.id WHERE id = @id";
                                 cmd.Parameters.AddWithValue("id", var);
                                 o = cmd.ExecuteScalar();
                             } catch (Exception) {
@@ -169,7 +168,7 @@ namespace RESTServices.Database {
                 reader.Read();
             }
             Account a = new Account() {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Id = reader.GetString(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
