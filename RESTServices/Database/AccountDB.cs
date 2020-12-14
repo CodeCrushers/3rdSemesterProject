@@ -26,13 +26,13 @@ namespace RESTServices.Database {
                             cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
                             cmd.Parameters.AddWithValue("password", entity.Password);
                             o = cmd.ExecuteScalar();
+                            scope.Complete();
                         } catch (Exception) {
                             o = false;
                             scope.Dispose();
                         }
                     }
                 }
-                scope.Complete();
             }
             return o;
         }
