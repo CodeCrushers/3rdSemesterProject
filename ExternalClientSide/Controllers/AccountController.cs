@@ -175,7 +175,6 @@ namespace ExternalClientSide.Controllers
                         Name = model.Name,
                         Phone = model.PhoneNumber,
                         Email = model.Email,
-                        Password = user.PasswordHash
 
                     };
                     CreateAccount(account);
