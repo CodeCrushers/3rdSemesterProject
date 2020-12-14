@@ -79,6 +79,7 @@ namespace ExternalClientSide.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
+
             }
 
             // This doesn't count login failures towards account lockout
