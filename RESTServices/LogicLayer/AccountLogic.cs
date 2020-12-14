@@ -27,9 +27,9 @@ namespace RESTServices.LogicLayer {
             return result;
         }
 
-        public Account GetAccount(string mail) {
+        public Account GetAccount(string value) {
             Account account = null;
-            account = this._accountDB.Get(mail);
+            account = this._accountDB.Get(value);
             return account;
         }
 

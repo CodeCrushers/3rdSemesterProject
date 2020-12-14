@@ -18,12 +18,11 @@ namespace RESTServices.Database {
                 con.Open();
                 using (SqlCommand cmd = con.CreateCommand()) {
                     try {
-                        cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber, @password)";
+                        cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber)";
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("password", entity.Password);
                         o = cmd.ExecuteScalar();
                     } catch (Exception e) {
                         throw e;
@@ -36,12 +35,26 @@ namespace RESTServices.Database {
         public Account Get(object var) {
             Account account = null;
             if (var is string) {
+                string value = (string)var;
+                string type;
+                if (value.Contains("@")) {
+                    type = "Email";
+                } else {
+                    type = "Id";
+                }
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "SELECT * FROM Account WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", var);
+                            switch(type) {
+                                case "Email":
+                                    cmd.CommandText = "SELECT * FROM Account WHERE email = @value";
+                                    break;
+                                case "Id":
+                                    cmd.CommandText = "SELECT * FROM Account WHERE id = @value";
+                                    break;
+                            }
+                            cmd.Parameters.AddWithValue("value", value);
                             var reader = cmd.ExecuteReader();
                             account = CreateObject(reader, true);
                         } catch (Exception e) {
@@ -76,12 +89,11 @@ namespace RESTServices.Database {
                 con.Open();
                 using (SqlCommand cmd = con.CreateCommand()) {
                     try {
-                        cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
+                        cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("password", entity.Password);
                         cmd.ExecuteNonQuery();
                     } catch (Exception e) {
                         result = false;
@@ -135,7 +147,6 @@ namespace RESTServices.Database {
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
-                Password = reader.GetString(reader.GetOrdinal("Password"))
             };
             return a;
         }
