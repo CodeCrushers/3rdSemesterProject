@@ -13,6 +13,7 @@ using ExternalClientSide.ObjectModels;
 using System.Web.Script.Serialization;
 using System.Net.Http;
 using System.Text;
+using System.Net;
 
 namespace ExternalClientSide.Controllers
 {
@@ -101,11 +102,6 @@ namespace ExternalClientSide.Controllers
             }
         }
 
-        private Account GetAccount(string email) {
-
-
-            return new Account();
-        }
 
         //
         // GET: /Account/VerifyCode
@@ -130,7 +126,8 @@ namespace ExternalClientSide.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                var response = GetAccount(model.Email);
+                if (result.Succeeded && response.StatusCode == HttpStatusCode.OK)
                 {
                     Account account = new Account {
                         Id = user.Id,
@@ -141,7 +138,7 @@ namespace ExternalClientSide.Controllers
                     };
                     CreateAccount(account);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -156,7 +153,12 @@ namespace ExternalClientSide.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-
+        private HttpResponseMessage GetAccount(string email) {
+            string fullUrl = BaseUrl + "account?email=" + email;
+            Console.WriteLine(fullUrl);
+            var response = HttpClient.GetAsync(fullUrl).Result;
+            return response;
+        }
         private void CreateAccount(Account account) {
             var json = new JavaScriptSerializer().Serialize(account);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
