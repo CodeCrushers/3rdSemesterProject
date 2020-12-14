@@ -18,10 +18,12 @@ namespace RESTServices.Controllers {
 
         [HttpPost]
         public HttpResponseMessage Post(HttpRequestMessage request, Account val) {
-            HttpResponseMessage response;
-            if (this.Logic.CreateAccount(val)) {
-                response = request.CreateResponse(HttpStatusCode.Created);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.CreateAccount(val)) {
+                    response = request.CreateResponse(HttpStatusCode.Created);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
             return response;
@@ -30,11 +32,13 @@ namespace RESTServices.Controllers {
         [HttpGet]
         [ResponseType(typeof(IEnumerable<Account>))]
         public HttpResponseMessage Get(HttpRequestMessage request) {
-            HttpResponseMessage response;
-            IEnumerable<Account> list = this.Logic.GetAllAccounts();
-            if(list != null && list.Any()) {
-                response = request.CreateResponse(HttpStatusCode.OK, list);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                IEnumerable<Account> list = this.Logic.GetAllAccounts();
+                if(list != null && list.Any()) {
+                    response = request.CreateResponse(HttpStatusCode.OK, list);
+                } 
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.NotFound);
             }
             return response;
@@ -43,11 +47,13 @@ namespace RESTServices.Controllers {
         [HttpGet, Route("{email}")]
         [ResponseType(typeof(Account))]
         public HttpResponseMessage Get(HttpRequestMessage request, string email) {
-            HttpResponseMessage response;
-            Account account = this.Logic.GetAccount(email);
-            if(account != null) {
-                response = request.CreateResponse(HttpStatusCode.OK, account);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                Account account = this.Logic.GetAccount(email);
+                if(account != null) {
+                    response = request.CreateResponse(HttpStatusCode.OK, account);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.NotFound);
             }
             return response;
@@ -55,10 +61,12 @@ namespace RESTServices.Controllers {
 
         [HttpPut]
         public HttpResponseMessage Put(HttpRequestMessage request, Account val) {
-            HttpResponseMessage response;
-            if(this.Logic.EditAccount(val)) {
-                response = request.CreateResponse(HttpStatusCode.NoContent);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.EditAccount(val)) {
+                    response = request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
             return response;
@@ -66,10 +74,12 @@ namespace RESTServices.Controllers {
 
         [HttpDelete, Route("{id}")]
         public HttpResponseMessage Delete(HttpRequestMessage request, string id) {
-            HttpResponseMessage response;
-            if(this.Logic.DeleteAccount(id)) {
-                response = request.CreateResponse(HttpStatusCode.Accepted);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.DeleteAccount(id)) {
+                    response = request.CreateResponse(HttpStatusCode.Accepted);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.NotFound);
             }
             return response;
