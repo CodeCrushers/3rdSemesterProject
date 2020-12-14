@@ -65,7 +65,7 @@ namespace RESTServices.Controllers {
         }
 
         [HttpDelete, Route("{id}")]
-        public HttpResponseMessage Delete(HttpRequestMessage request, int id) {
+        public HttpResponseMessage Delete(HttpRequestMessage request, string id) {
             HttpResponseMessage response;
             if(this.Logic.DeleteAccount(id)) {
                 response = request.CreateResponse(HttpStatusCode.Accepted);

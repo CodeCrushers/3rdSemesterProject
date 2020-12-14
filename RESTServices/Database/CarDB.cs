@@ -24,7 +24,7 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber, leasingYear, distance, charge, capacity, locationId, onRoute) OUTPUT INSERTED.registrationNumber " +
+                            cmd.CommandText = "INSERT INTO Car (brand, model, registrationNumber, leasingYear, distance, charge, capacity, locationId, onRoute) OUTPUT INSERTED.registrationNumber " +
                                 "VALUES (@brand, @model, @registrationNumber, @leasingYear, @distance, @charge, @capacity, @locationId, @onRoute)";
                             cmd.Parameters.AddWithValue("brand", entity.Brand);
                             cmd.Parameters.AddWithValue("model", entity.Model);
@@ -55,7 +55,7 @@ namespace RESTServices.Database {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
                             try {
-                                cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                                cmd.CommandText = "SELECT * FROM Car WHERE registrationNumber = @registrationNumber";
                                 cmd.Parameters.AddWithValue("registrationNumber", var);
                                 var reader = cmd.ExecuteReader();
                                 car = CreateObject(reader, true);
@@ -77,7 +77,7 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "SELECT * FROM Cars";
+                            cmd.CommandText = "SELECT * FROM Car";
                             var reader = cmd.ExecuteReader();
                             list = CreateList(reader);
                         } catch (Exception) {
@@ -97,7 +97,7 @@ namespace RESTServices.Database {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            cmd.CommandText = "UPDATE Cars SET " +
+                            cmd.CommandText = "UPDATE Car SET " +
                                                 "brand = @brand, model = @model, leasingYear = @leasingYear, distance = @distance, charge = @charge, capacity = @capacity, locationId = @locationId, onRoute = @onRoute " +
                                                 "WHERE registrationNumber = @registrationNumber";
                             cmd.Parameters.AddWithValue("brand", entity.Brand);
@@ -129,7 +129,7 @@ namespace RESTServices.Database {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
                             try {
-                                cmd.CommandText = "DELETE FROM Cars OUTPUT DELETED.id WHERE id = @id";
+                                cmd.CommandText = "DELETE FROM Car OUTPUT DELETED.id WHERE id = @id";
                                 cmd.Parameters.AddWithValue("id", reg);
                                 o = cmd.ExecuteScalar();
                             } catch (Exception) {
