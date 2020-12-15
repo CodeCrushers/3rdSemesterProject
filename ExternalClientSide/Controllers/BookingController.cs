@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using ExternalClinetSide.Models;
 using ExternalClinetSide.BusinessLayer;
-
+using System.Threading.Tasks;
 
 namespace ExternalClinetSide.Controllers
 {
@@ -18,7 +18,7 @@ namespace ExternalClinetSide.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult Booking(Booking bookingInput)
+        public async Task<ActionResult> Booking(Booking bookingInput)
         {
             if(ModelState.IsValid)
             {

@@ -11,7 +11,9 @@ using Newtonsoft.Json;
 using Microsoft.AspNet.Identity;
 using ExternalClientSide.Models;
 using ExternalClientSide;
-using 
+using System.Web.Script.Serialization;
+using System.Text;
+using System.Net;
 
 namespace ExternalClinetSide.BusinessLayer
 {
@@ -26,6 +28,8 @@ namespace ExternalClinetSide.BusinessLayer
         {
             Account account = new Account();
             Car car = new Car();
+            string id = "";
+            //getting Account
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(baseURL);
@@ -33,9 +37,8 @@ namespace ExternalClinetSide.BusinessLayer
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage res = new HttpResponseMessage();
-                var id = HttpContext.Current.User.Identity.Name;
-
-                res = await client.GetAsync("api/Account/id/" + id);
+                id = HttpContext.Current.User.Identity.GetUserId();
+                res  = await client.GetAsync("api/Account/id/" + id);
                 if (res.IsSuccessStatusCode)
                 {
                     var AccountResponse = res.Content.ReadAsStringAsync().Result;
@@ -44,7 +47,46 @@ namespace ExternalClinetSide.BusinessLayer
                 }
             }
 
-            using (var client = new HttpClient)
+            // getting car
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseURL);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage res = new HttpResponseMessage();
+                var CarReg = "789X789";
+                res = await client.GetAsync("api/Car/" + CarReg);
+                if (res.IsSuccessStatusCode)
+                {
+                    var CarResponse = res.Content.ReadAsStringAsync().Result;
+
+                    car = JsonConvert.DeserializeObject<Car>(CarResponse);
+                }
+
+            }
+
+            booking.Account = account;
+            booking.BookingCar = car;
+
+            //post to api booking
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(baseURL);
+                var json = new JavaScriptSerializer().Serialize(booking);
+                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = client.PostAsync("api/Booking", stringContent).Result;
+                if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
+                {
+                    Console.WriteLine("it worked");
+                }
+                else
+                {
+                    Console.WriteLine("it didnt work");
+                }
+            }
+
+                Console.WriteLine("test");
         }
 
     }
