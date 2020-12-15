@@ -18,10 +18,12 @@ namespace RESTServices.Controllers
 
         [HttpPost]
         public HttpResponseMessage Post(HttpRequestMessage request, Car car) {
-            HttpResponseMessage response;
-            if (this.Logic.CreateCar(car)) {
-                response = request.CreateResponse(HttpStatusCode.Created);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.CreateCar(car)) {
+                    response = request.CreateResponse(HttpStatusCode.Created);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
             return response;
@@ -30,11 +32,13 @@ namespace RESTServices.Controllers
         [HttpGet]
         [ResponseType(typeof(IEnumerable<Car>))]
         public HttpResponseMessage Get(HttpRequestMessage request) {
-            HttpResponseMessage response;
-            IEnumerable<Car> list = this.Logic.GetAllCars();
-            if (list != null && list.Any()) {
-                response = request.CreateResponse(HttpStatusCode.OK, list);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                IEnumerable<Car> list = this.Logic.GetAllCars();
+                if (list != null && list.Any()) {
+                    response = request.CreateResponse(HttpStatusCode.OK, list);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.NotFound);
             }
             return response;
@@ -43,11 +47,13 @@ namespace RESTServices.Controllers
         [HttpGet, Route("{reg}")]
         [ResponseType(typeof(Car))]
         public HttpResponseMessage Get(HttpRequestMessage request, string reg) {
-            HttpResponseMessage response;
-            Car car = this.Logic.GetCar(reg);
-            if (car != null) {
-                response = request.CreateResponse(HttpStatusCode.OK, car);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                Car car = this.Logic.GetCar(reg);
+                if (car != null) {
+                    response = request.CreateResponse(HttpStatusCode.OK, car);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.NotFound);
             }
             return response;
@@ -55,10 +61,12 @@ namespace RESTServices.Controllers
 
         [HttpPut]
         public HttpResponseMessage Put(HttpRequestMessage request, Car car) {
-            HttpResponseMessage response;
-            if (this.Logic.EditCar(car)) {
-                response = request.CreateResponse(HttpStatusCode.NoContent);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.EditCar(car)) {
+                    response = request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
             return response;
@@ -66,10 +74,12 @@ namespace RESTServices.Controllers
 
         [HttpDelete, Route("{reg}")]
         public HttpResponseMessage Delete(HttpRequestMessage request, string reg) {
-            HttpResponseMessage response;
-            if (this.Logic.DeleteCar(reg)) {
-                response = request.CreateResponse(HttpStatusCode.Accepted);
-            } else {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.DeleteCar(reg)) {
+                    response = request.CreateResponse(HttpStatusCode.Accepted);
+                }
+            } catch (Exception) {
                 response = request.CreateResponse(HttpStatusCode.NotFound);
             }
             return response;

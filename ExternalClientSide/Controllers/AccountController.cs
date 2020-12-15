@@ -13,6 +13,8 @@ using ExternalClientSide.ObjectModels;
 using System.Web.Script.Serialization;
 using System.Net.Http;
 using System.Text;
+using System.Net;
+using System.Transactions;
 
 namespace ExternalClientSide.Controllers
 {
@@ -101,11 +103,6 @@ namespace ExternalClientSide.Controllers
             }
         }
 
-        private Account GetAccount(string email) {
-
-
-            return new Account();
-        }
 
         //
         // GET: /Account/VerifyCode
@@ -129,39 +126,43 @@ namespace ExternalClientSide.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    Account account = new Account {
-                        Id = user.Id,
-                        Name = model.Name,
-                        Phone = model.PhoneNumber,
-                        Email = model.Email,
+                Account account = new Account {
+                    Id = user.Id,
+                    Name = model.Name,
+                    Phone = model.PhoneNumber,
+                    Email = model.Email,
 
-                    };
-                    CreateAccount(account);
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                };
 
-                    return RedirectToAction("Index", "Home");
-                }
-                AddErrors(result);
+                    HttpResponseMessage response = CreateAccount(account);
+                    if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created) {
+
+                        var result = await UserManager.CreateAsync(user, model.Password);
+                        if (result.Succeeded)
+                        {
+                            await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+                            // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                            // Send an email with this link
+                            // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                            // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                            // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                            return RedirectToAction("Index", "Home");
+                        }
+                    AddErrors(result);
+                    }
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
         }
 
-        private void CreateAccount(Account account) {
+        private HttpResponseMessage CreateAccount(Account account) {
             var json = new JavaScriptSerializer().Serialize(account);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync(BaseUrl + "account", stringContent);
-
+            var response = HttpClient.PostAsync(BaseUrl + "account", stringContent).Result;
+            return response;
         }
 
         //

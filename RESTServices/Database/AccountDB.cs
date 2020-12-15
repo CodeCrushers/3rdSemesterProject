@@ -14,23 +14,18 @@ namespace RESTServices.Database {
 
         public object Create(Account entity) {
             object o = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber, @password)";
-                            cmd.Parameters.AddWithValue("id", entity.Id);
-                            cmd.Parameters.AddWithValue("name", entity.Name);
-                            cmd.Parameters.AddWithValue("email", entity.Email);
-                            cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                            cmd.Parameters.AddWithValue("password", entity.Password);
-                            o = cmd.ExecuteScalar();
-                            scope.Complete();
-                        } catch (Exception) {
-                            o = false;
-                            scope.Dispose();
-                        }
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber)";
+                        cmd.Parameters.AddWithValue("id", entity.Id);
+                        cmd.Parameters.AddWithValue("name", entity.Name);
+                        cmd.Parameters.AddWithValue("email", entity.Email);
+                        cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        o = cmd.ExecuteScalar();
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
             }
@@ -40,90 +35,71 @@ namespace RESTServices.Database {
         public Account Get(object var) {
             Account account = null;
             if (var is string) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            try {
-                                cmd.CommandText = "SELECT * FROM Account WHERE id = @id";
-                                cmd.Parameters.AddWithValue("id", var);
-                                var reader = cmd.ExecuteReader();
-                                account = CreateObject(reader, true);
-                            } catch (Exception) {
-                                scope.Dispose();
+                string value = (string)var;
+                string type;
+                if (value.Contains("@")) {
+                    type = "Email";
+                } else {
+                    type = "Id";
+                }
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            switch(type) {
+                                case "Email":
+                                    cmd.CommandText = "SELECT * FROM Account WHERE email = @value";
+                                    break;
+                                case "Id":
+                                    cmd.CommandText = "SELECT * FROM Account WHERE id = @value";
+                                    break;
                             }
+                            cmd.Parameters.AddWithValue("value", value);
+                            var reader = cmd.ExecuteReader();
+                            account = CreateObject(reader, true);
+                        } catch (Exception e) {
+                            throw e;
                         }
                     }
-                    scope.Complete();
                 } 
             }
             return account;
         }
 
-        /*
-        public Account Get(string email) {
-            Account account = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "SELECT * FROM Account WHERE email = @email";
-                            cmd.Parameters.AddWithValue("email", email);
-                            var reader = cmd.ExecuteReader();
-                            account = CreateObject(reader, true);
-                        } catch (Exception) {
-                            scope.Dispose();
-                        }
-                    }
-                }
-                scope.Complete();
-            }
-            return account;
-        }
-        */
-
         public IEnumerable<Account> GetAll() {
             IEnumerable<Account> accounts = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "SELECT * FROM Account";
-                            var reader = cmd.ExecuteReader();
-                            accounts = CreateList(reader);
-                        } catch (Exception) {
-                            scope.Dispose();
-                        }
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Account";
+                        var reader = cmd.ExecuteReader();
+                        accounts = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
             return accounts;
         }
 
         public bool Update(Account entity) {
             bool result = true;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", entity.Id);
-                            cmd.Parameters.AddWithValue("name", entity.Name);
-                            cmd.Parameters.AddWithValue("email", entity.Email);
-                            cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                            cmd.Parameters.AddWithValue("password", entity.Password);
-                            cmd.ExecuteNonQuery();
-                        } catch (Exception) {
-                            result = false;
-                            scope.Dispose();
-                        }
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
+                        cmd.Parameters.AddWithValue("id", entity.Id);
+                        cmd.Parameters.AddWithValue("name", entity.Name);
+                        cmd.Parameters.AddWithValue("email", entity.Email);
+                        cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        cmd.ExecuteNonQuery();
+                    } catch (Exception e) {
+                        result = false;
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
             return result;
         }
@@ -131,21 +107,18 @@ namespace RESTServices.Database {
         public object Delete(object var) {
             object o = null;
             if (var is string) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            try {
-                                cmd.CommandText = "DELETE FROM Account OUTPUT DELETED.id WHERE id = @id";
-                                cmd.Parameters.AddWithValue("id", var);
-                                o = cmd.ExecuteScalar();
-                            } catch (Exception) {
-                                o = false;
-                                scope.Dispose();
-                            }
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "DELETE FROM Account OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception e) {
+                            o = false;
+                            throw e;
                         }
                     }
-                    scope.Complete();
                 }
             } else {
                 o = false;
@@ -174,7 +147,6 @@ namespace RESTServices.Database {
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
-                Password = reader.GetString(reader.GetOrdinal("Password"))
             };
             return a;
         }
