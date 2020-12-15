@@ -1,4 +1,8 @@
-﻿@model ExternalClinetSide.Models.Booking
+﻿@{
+    Layout = null;
+}
+
+@model ExternalClinetSide.Models.Booking
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +14,7 @@
     {
         //@Html.HiddenFor(m => m.StartLocation, htmlAttributes: new { id = "origin-inputHidden" })
         //@Html.HiddenFor(m => m.StartLocation, htmlAttributes: new { id = "destination-inputHidden" })
-        @Html.HiddenFor(m => m.PaymentAmount, htmlAttributes: new {id = "PaymentAmountHidden"})
+        @Html.HiddenFor(m => m.PaymentAmount, htmlAttributes: new { id = "PaymentAmountHidden" })
 
         <input id="origin-input"
                class="controls"
@@ -143,7 +147,7 @@
             this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
             this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
             this.route();
- 
+
         }
 
 

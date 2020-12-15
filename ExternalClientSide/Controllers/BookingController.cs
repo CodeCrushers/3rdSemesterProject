@@ -4,11 +4,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ExternalClinetSide.Models;
+using ExternalClinetSide.BusinessLayer;
+
 
 namespace ExternalClinetSide.Controllers
 {
     public class BookingController : Controller
     {
+        BookingBusinesController BookingBController = new BookingBusinesController();
         // GET: Booking
         public ActionResult BookingMap()
         {
@@ -19,16 +22,12 @@ namespace ExternalClinetSide.Controllers
         {
             if(ModelState.IsValid)
             {
-                var booking = new Booking { StartLocation = bookingInput.StartLocation, EndLocation = bookingInput.EndLocation, Account = null, PayedFor = true, BookingCar = null, BookingDate = new DateTime(), PaymentAmount = bookingInput.PaymentAmount};
-
+                var booking = new Booking { StartLocation = bookingInput.StartLocation, EndLocation = bookingInput.EndLocation, PayedFor = true, BookingDate = DateTime.Now, PaymentAmount = bookingInput.PaymentAmount};
+                BookingBController.CreateBooking(booking); 
 
 
             }
 
-            return View();
-        }
-        public ActionResult BookingTest()
-        {
             return View();
         }
     }

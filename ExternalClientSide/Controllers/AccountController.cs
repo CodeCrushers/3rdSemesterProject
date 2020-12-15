@@ -14,7 +14,6 @@ using System.Web.Script.Serialization;
 using System.Net.Http;
 using System.Text;
 using System.Net;
-using System.Transactions;
 
 namespace ExternalClientSide.Controllers
 {
@@ -91,7 +90,7 @@ namespace ExternalClientSide.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("BookingMap", "Booking");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
