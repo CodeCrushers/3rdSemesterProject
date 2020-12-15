@@ -27,7 +27,7 @@
             <TextBlock  Grid.Column="2" HorizontalAlignment="Right">
                 Email:
             </TextBlock>
-            <RichTextBox MinWidth="250" Margin="20,0,0,0" Name="EmailInput" Grid.Column="3">
+            <RichTextBox MinWidth="220" Margin="20,0,0,0" Name="EmailInput" Grid.Column="3">
                 <FlowDocument/>
             </RichTextBox>
             <Button Margin="20,0,0,0" HorizontalContentAlignment="Stretch" Grid.Column="4"  HorizontalAlignment="Stretch">Search</Button>

@@ -43,8 +43,7 @@ namespace InternalClientSide.Gui {
                 Phone = phoneNumber,
                 Email = email
             };
-            // IMPLEMENT API CONNECTION HERE
-            // USE JSON SERIALIZATION
+
         }
 
 
