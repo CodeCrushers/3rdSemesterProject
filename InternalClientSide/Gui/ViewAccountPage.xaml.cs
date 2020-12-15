@@ -24,11 +24,14 @@ namespace InternalClientSide.Gui {
 
         private AccountController accountController;
         private BookingController bookingController;
+        private CarController carController;
+
         public ViewAccountPage() {
             InitializeComponent();
             AccountBookings.DataContext = null;
             accountController = new AccountController();
             bookingController = new BookingController();
+            carController = new CarController();
         }
 
         private void ChangeAccount(object sender, RoutedEventArgs e) {
@@ -44,12 +47,15 @@ namespace InternalClientSide.Gui {
         private void ChangeBooking(object sender, RoutedEventArgs e) {
             Booking booking = bookingController.Booking;
             if (booking != null) {
-                bookingController.Booking.Name = GetText(CurrentCarRegistrationInput.Document);
-                bookingController.Booking.Phone = GetText(CurrentDateInput.Document);
-                bookingController.Booking.Email = GetText(CurrentStartInput.Document);
-                bookingController.Booking.Email = GetText(CurrentEndInput.Document);
-                bookingController.Booking.Email = GetText(CurrentPaymentInput.Document);
-                bookingController.Booking.Email = GetText(CurrentPayedInput.Document);
+                Car newCar = carController.GetCar(GetText(CurrentCarRegistrationInput.Document));
+                if (newCar != null) {
+                bookingController.Booking.BookingCar = newCar;
+                }
+                bookingController.Booking.BookingDate = DateTime.Parse(GetText(CurrentDateInput.Document));
+                bookingController.Booking.StartLocation = GetText(CurrentStartInput.Document);
+                bookingController.Booking.EndLocation = GetText(CurrentEndInput.Document);
+                bookingController.Booking.PaymentAmount = Double.Parse(GetText(CurrentPaymentInput.Document));
+                bookingController.Booking.PayedFor = Boolean.Parse(GetText(CurrentPayedInput.Document));
                 bookingController.ChangeBooking(bookingController.Booking);
             }
         }
@@ -84,5 +90,13 @@ namespace InternalClientSide.Gui {
             return bookingController.GetBookings(id);
         }
 
+        private void AccountBookings_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+            Booking booking = (Booking) AccountBookings.SelectedItem;
+            List<Booking> bookings = (List<Booking>) AccountBookings.SelectedItems;
+            DateTime date = booking.BookingDate;
+
+
+
+        }
     }
 }

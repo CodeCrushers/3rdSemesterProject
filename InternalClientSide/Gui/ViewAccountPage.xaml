@@ -59,8 +59,8 @@
             <Button Name="ChangeBookingButton" Grid.Column="2" Grid.Row="5" Height="20" Click="ChangeBooking" Margin="5,0,5,0">
                 Change booking info
             </Button>
-            <Grid  Grid.Row="7" Grid.RowSpan="8">
-                <ListView Name="AccountBookings" ItemsSource="{Binding}" >
+            <Grid  Grid.Row="7" Grid.RowSpan="8" >
+                <ListView Name="AccountBookings" ItemsSource="{Binding}" MouseDoubleClick="AccountBookings_MouseDoubleClick">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding BookingCar.RegistrationNumber}"> </GridViewColumn>

@@ -33,8 +33,8 @@ namespace InternalClientSide.Controllers {
 
         }
 
-        public void ChangeBooking(int id) {
-            string fullUrl = baseurl + "account/";
+        public void ChangeBooking(Booking booking) {
+            string fullUrl = baseurl + "Booking/";
             var json = new JavaScriptSerializer().Serialize(Booking);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var response = HttpClient.PutAsync(fullUrl, stringContent);
