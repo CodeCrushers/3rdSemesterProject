@@ -8,7 +8,7 @@ using System.Transactions;
 using System.Web;
 
 namespace RESTServices.Database {
-    public class AccountDB : ICRUD<Account> {
+    public class AccountDB {
 
         private static string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
@@ -32,28 +32,15 @@ namespace RESTServices.Database {
             return o;
         }
 
-        public Account Get(object var) {
+        public Account GetAccountById(object var) {
             Account account = null;
             if (var is string) {
                 string value = (string)var;
-                string type;
-                if (value.Contains("@")) {
-                    type = "Email";
-                } else {
-                    type = "Id";
-                }
                 using (SqlConnection con = new SqlConnection(_connectionString)) {
                     con.Open();
                     using (SqlCommand cmd = con.CreateCommand()) {
                         try {
-                            switch(type) {
-                                case "Email":
-                                    cmd.CommandText = "SELECT * FROM Account WHERE email = @value";
-                                    break;
-                                case "Id":
-                                    cmd.CommandText = "SELECT * FROM Account WHERE id = @value";
-                                    break;
-                            }
+                            cmd.CommandText = "SELECT * FROM Account WHERE id = @value";
                             cmd.Parameters.AddWithValue("value", value);
                             var reader = cmd.ExecuteReader();
                             account = CreateObject(reader, true);
@@ -62,6 +49,27 @@ namespace RESTServices.Database {
                         }
                     }
                 } 
+            }
+            return account;
+        }
+
+        public Account GetAccountByEmail(object var) {
+            Account account = null;
+            if (var is string) {
+                string value = (string)var;
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "SELECT * FROM Account WHERE email = @value";
+                            cmd.Parameters.AddWithValue("value", value);
+                            var reader = cmd.ExecuteReader();
+                            account = CreateObject(reader, true);
+                        } catch (Exception e) {
+                            throw e;
+                        }
+                    }
+                }
             }
             return account;
         }
