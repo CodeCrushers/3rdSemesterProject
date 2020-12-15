@@ -35,9 +35,9 @@ namespace RESTServices.LogicLayer {
             return result;
         }
 
-        public Booking GetBooking(string id) {
+        public Booking GetBookingById(string id) {
             Booking booking = null;
-            booking = _bookingDB.Get(id);
+            booking = _bookingDB.GetBookingById(id);
             Car car = _carDB.Get(booking.BookingCar.RegistrationNumber);
             Account account = _accountDB.Get(booking.Account.Id);
             if (car != null) {
@@ -47,6 +47,12 @@ namespace RESTServices.LogicLayer {
                 booking.Account = account;
             }
             return booking;
+        }
+
+        public IEnumerable<Booking> GetBookingsByAccountId(string accountId) {
+            IEnumerable<Booking> list = null;
+            list = this._bookingDB.GetBookingAccountId(accountId);
+            return list;
         }
 
         public IEnumerable<Booking> GetAllBookings() {

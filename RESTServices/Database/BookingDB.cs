@@ -37,7 +37,7 @@ namespace RESTServices.Database {
             return o;
         }
 
-        public Booking Get(string id) {
+        public Booking GetBookingById(string id) {
             Booking booking = null;
             using (SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
@@ -53,6 +53,24 @@ namespace RESTServices.Database {
                 }
             }
             return booking;
+        }
+
+        public IEnumerable<Booking> GetBookingAccountId(string id) {
+            IEnumerable<Booking> bookings = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Booking WHERE accountId = @id";
+                        cmd.Parameters.AddWithValue("id", id);
+                        var reader = cmd.ExecuteReader();
+                        bookings = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
+                    }
+                }
+            }
+            return bookings;
         }
 
         public IEnumerable<Booking> GetAll() {

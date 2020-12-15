@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RESTServices.Database;
 using RESTServices.LogicLayer;
 using RESTServices.Models;
 using System;
@@ -22,6 +23,7 @@ namespace TestProjekt {
                 Brand = "Toyota",
                 Model = "Avensis",
                 RegistrationNumber = "789X789",
+                LeasingYear = "1997",
                 Distance = 1000,
                 Charge = 199,
                 Capacity = 5,
@@ -34,17 +36,22 @@ namespace TestProjekt {
         public void CreateCarTest() {
             //Arrange
             bool result;
-
             //Act
             try {
                 result = this.Logic.CreateCar(this.Car);
-                this.Car = null;
             } catch (Exception) {
+                this.Car = null;
                 result = false;
             }
-
             //Assert
             Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GetCarTest() {
+            //Arrange
+            //Act
+            //Assert
         }
 
         [TestCleanup]
