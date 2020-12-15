@@ -9,7 +9,7 @@ using System.Web;
 
 namespace RESTServices.Database {
 
-    public class CarDB : ICRUD<Car> {
+    public class CarDB {
 
         private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
@@ -36,7 +36,7 @@ namespace RESTServices.Database {
                             cmd.Parameters.AddWithValue("locationId", entity.LocationId);
                             cmd.Parameters.AddWithValue("onRoute", entity.OnRoute);
                             o = cmd.ExecuteScalar();
-                        } catch (Exception) {
+                        } catch (Exception e) {
                             o = false;
                             scope.Dispose();
                         }
@@ -129,8 +129,8 @@ namespace RESTServices.Database {
                         con.Open();
                         using (SqlCommand cmd = con.CreateCommand()) {
                             try {
-                                cmd.CommandText = "DELETE FROM Car OUTPUT DELETED.id WHERE id = @id";
-                                cmd.Parameters.AddWithValue("id", reg);
+                                cmd.CommandText = "DELETE FROM Car OUTPUT DELETED.registrationNumber WHERE registrationNumber = @reg";
+                                cmd.Parameters.AddWithValue("reg", reg);
                                 o = cmd.ExecuteScalar();
                             } catch (Exception) {
                                 o = false;

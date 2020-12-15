@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 
 namespace RESTServices.LogicLayer {
@@ -21,32 +22,37 @@ namespace RESTServices.LogicLayer {
 
         public bool CreateBooking(Booking entity) {
             bool result = false;
-            object o = this._bookingDB.Create(entity);
-            if (o is int) {
-                result = true;
-            } else if (o is bool) {
-                if ((bool)o == false) {
-                    result = false;
+            using (TransactionScope scope = new TransactionScope()) {
+                Car car = _carDB.Get(entity.BookingCar.RegistrationNumber);
+                if(car.OnRoute == false) {
+                    car.OnRoute = true;
+                    _carDB.Update(car);
+                    object o = this._bookingDB.Create(entity);
+                    result = true;
                 }
+                scope.Complete();
             }
             return result;
         }
 
-        public Booking GetBooking(string id) {
+        public Booking GetBookingById(string id) {
             Booking booking = null;
-            SqlDataReader reader = _bookingDB.Get(id);
-            if(reader != null) {
-                booking = BookingDB.CreateObject(reader, true);
-                Car car = _carDB.Get(reader.GetString(reader.GetOrdinal("carRegistrationNumber")));
-                Account account = _accountDB.Get(reader.GetString(reader.GetOrdinal("accountId")));
-                if(car != null) {
-                    booking.BookingCar = car;
-                }
-                if(account != null) {
-                    booking.Account = account;
-                }
+            booking = _bookingDB.GetBookingById(id);
+            Car car = _carDB.Get(booking.BookingCar.RegistrationNumber);
+            Account account = _accountDB.GetAccountById(booking.Account.Id);
+            if (car != null) {
+                booking.BookingCar = car;
+            }
+            if (account != null) {
+                booking.Account = account;
             }
             return booking;
+        }
+
+        public IEnumerable<Booking> GetBookingsByAccountId(string accountId) {
+            IEnumerable<Booking> list = null;
+            list = this._bookingDB.GetBookingAccountId(accountId);
+            return list;
         }
 
         public IEnumerable<Booking> GetAllBookings() {

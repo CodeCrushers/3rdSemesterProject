@@ -14,97 +14,104 @@ namespace RESTServices.Database {
 
         public object Create(Booking entity) {
             object o = null;
-            using(TransactionScope scope = new TransactionScope()) {
-                using(SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocation, endLocation, bookingDate, carRegistrationNumber, accountId) OUTPUT INSERTED.id " +
-                                "VALUES (@payedFor, @paymentAmount, @startLocation, @endLocation, @bookingDate, @carRegistrationNumber, @accountId)";
-                            cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
-                            cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
-                            cmd.Parameters.AddWithValue("startLocation", entity.StartLocation);
-                            cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
-                            cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
-                            cmd.Parameters.AddWithValue("carRegistrationNumber", entity.BookingCar.RegistrationNumber);
-                            cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
-                            o = cmd.ExecuteScalar();
-                        } catch(Exception) {
-                            o = false;
-                            scope.Dispose();
-                        }
+            using(SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "INSERT INTO Booking (payedFor, paymentAmount, startLocation, endLocation, bookingDate, carRegistrationNumber, accountId) OUTPUT INSERTED.id " +
+                            "VALUES (@payedFor, @paymentAmount, @startLocation, @endLocation, @bookingDate, @carRegistrationNumber, @accountId)";
+                        cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
+                        cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
+                        cmd.Parameters.AddWithValue("startLocation", entity.StartLocation);
+                        cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
+                        cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
+                        cmd.Parameters.AddWithValue("carRegistrationNumber", entity.BookingCar.RegistrationNumber);
+                        cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
+                        o = cmd.ExecuteScalar();
+                    } catch(Exception e) {
+                        o = false;
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
             return o;
         }
 
-        public SqlDataReader Get(string id) {
-            SqlDataReader reader = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using(SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "SELECT * FROM Car WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", id);
-                            reader = cmd.ExecuteReader();
-                        } catch (Exception) {
-                            scope.Dispose();
-                        }
+        public Booking GetBookingById(string id) {
+            Booking booking = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using(SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Booking WHERE id = @id";
+                        cmd.Parameters.AddWithValue("id", id);
+                        var reader = cmd.ExecuteReader();
+                        booking = CreateObject(reader, true);
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
-            return reader;
+            return booking;
+        }
+
+        public IEnumerable<Booking> GetBookingAccountId(string id) {
+            IEnumerable<Booking> bookings = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Booking WHERE accountId = @id";
+                        cmd.Parameters.AddWithValue("id", id);
+                        var reader = cmd.ExecuteReader();
+                        bookings = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
+                    }
+                }
+            }
+            return bookings;
         }
 
         public IEnumerable<Booking> GetAll() {
             IEnumerable<Booking> bookings = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "SELECT * FROM Booking";
-                            var reader = cmd.ExecuteReader();
-                            bookings = CreateList(reader);
-                        } catch (Exception) {
-                            scope.Dispose();
-                        }
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Booking";
+                        var reader = cmd.ExecuteReader();
+                        bookings = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
             return bookings;
         }
 
         public bool Update(Booking entity) {
             bool result = true;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        try {
-                            cmd.CommandText = "UPDATE Booking SET payedFor = @payedFor, paymentAmount = @paymentAmount, startLocation = @startLocation, endLocation = @endLocation," +
-                                                " bookingDate = @bookingDate, bookingRegistrationNumber = @bookingRegistrationNumber, accountId = @accountId WHERE id = @id";
-                            cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
-                            cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
-                            cmd.Parameters.AddWithValue("startLocation", entity.StartLocation);
-                            cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
-                            cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
-                            cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
-                            cmd.Parameters.AddWithValue("accoutnId", entity.Account.Id);
-                            cmd.Parameters.AddWithValue("id", entity.Id);
-                            cmd.ExecuteNonQuery();
-                        } catch (Exception) {
-                            result = false;
-                            scope.Dispose();
-                        }
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "UPDATE Booking SET payedFor = @payedFor, paymentAmount = @paymentAmount, startLocation = @startLocation, endLocation = @endLocation," +
+                                            " bookingDate = @bookingDate, bookingRegistrationNumber = @bookingRegistrationNumber, accountId = @accountId WHERE id = @id";
+                        cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
+                        cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
+                        cmd.Parameters.AddWithValue("startLocation", entity.StartLocation);
+                        cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
+                        cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
+                        cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
+                        cmd.Parameters.AddWithValue("accoutnId", entity.Account.Id);
+                        cmd.Parameters.AddWithValue("id", entity.Id);
+                        cmd.ExecuteNonQuery();
+                    } catch (Exception e) {
+                        result = false;
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
             return result;
         }
@@ -112,21 +119,18 @@ namespace RESTServices.Database {
         public object Delete(object var) {
             object o = null;
             if (var is int) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            try {
-                                cmd.CommandText = "DELETE FROM Booking OUTPUT DELETED.id WHERE id = @id";
-                                cmd.Parameters.AddWithValue("id", var);
-                                o = cmd.ExecuteScalar();
-                            } catch (Exception) {
-                                o = false;
-                                scope.Dispose();
-                            }
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "DELETE FROM Booking OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception e) {
+                            o = false;
+                            throw e;
                         }
                     }
-                    scope.Complete();
                 } 
             } else {
                 o = false;
@@ -158,6 +162,8 @@ namespace RESTServices.Database {
                 StartLocation = reader.GetString(reader.GetOrdinal("startLocation")),
                 EndLocation = reader.GetString(reader.GetOrdinal("endLocation")),
                 BookingDate = reader.GetDateTime(reader.GetOrdinal("bookingDate")),
+                Account = new Account() { Id = reader.GetString(reader.GetOrdinal("accountId"))},
+                BookingCar = new Car() { RegistrationNumber = reader.GetString(reader.GetOrdinal("carRegistrationNumber")) }
             };
             return booking;
         }
