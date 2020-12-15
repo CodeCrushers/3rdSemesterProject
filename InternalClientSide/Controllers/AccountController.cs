@@ -23,16 +23,15 @@ namespace InternalClientSide.Controllers {
 
         public Account GetAccount(string email) {
             string fullUrl = baseurl + "account/" + email + "/";
-            Console.WriteLine(fullUrl);
+            try {
             var response = HttpClient.GetAsync(fullUrl).Result;
             response.EnsureSuccessStatusCode();
-            try {
                 Account = response.Content.ReadAsAsync<Account>().Result;
                 
             }
-            catch (Exception) {
+            catch (Exception e) {
 
-                throw;
+
             }
 
             return Account;

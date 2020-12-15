@@ -14,30 +14,28 @@ namespace InternalClientSide.Controllers {
         private string baseurl = "https://localhost:44346/api/";
         public Booking Booking { get; set; }
 
-
         public List<Booking> GetBookings(string id) {
-            List<Booking> bookings;
+            List<Booking> bookings = null;
             string fullUrl = baseurl + "Booking/Account/" + id + "/";
-            var response = HttpClient.GetAsync(fullUrl).Result;
-            response.EnsureSuccessStatusCode();
             try {
+                var response = HttpClient.GetAsync(fullUrl).Result;
+                response.EnsureSuccessStatusCode();
                 bookings = response.Content.ReadAsAsync<List<Booking>>().Result;
 
             }
-            catch (Exception) {
-
-                throw;
+            catch (Exception e) {
+                
             }
 
             return bookings;
 
         }
 
-        public void ChangeBooking(Booking booking) {
+        public async void ChangeBooking(Booking booking) {
             string fullUrl = baseurl + "Booking/";
-            var json = new JavaScriptSerializer().Serialize(Booking);
+            var json = new JavaScriptSerializer().Serialize(booking);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = HttpClient.PutAsync(fullUrl, stringContent);
+            var response = await HttpClient.PutAsync(fullUrl, stringContent);
         }
     }
 }

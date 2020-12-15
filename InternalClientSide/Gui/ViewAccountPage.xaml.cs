@@ -45,19 +45,19 @@ namespace InternalClientSide.Gui {
         }
 
         private void ChangeBooking(object sender, RoutedEventArgs e) {
-            Booking booking = bookingController.Booking;
-            if (booking != null) {
-                Car newCar = carController.GetCar(GetText(CurrentCarRegistrationInput.Document));
-                if (newCar != null) {
-                bookingController.Booking.BookingCar = newCar;
-                }
-                bookingController.Booking.BookingDate = DateTime.Parse(GetText(CurrentDateInput.Document));
-                bookingController.Booking.StartLocation = GetText(CurrentStartInput.Document);
-                bookingController.Booking.EndLocation = GetText(CurrentEndInput.Document);
-                bookingController.Booking.PaymentAmount = Double.Parse(GetText(CurrentPaymentInput.Document));
-                bookingController.Booking.PayedFor = Boolean.Parse(GetText(CurrentPayedInput.Document));
-                bookingController.ChangeBooking(bookingController.Booking);
+            Booking booking = new Booking();
+            Car newCar = carController.GetCar(GetText(CurrentCarRegistrationInput.Document));
+            if (newCar != null) {
+            booking.BookingCar = newCar;
             }
+            booking.BookingDate = DateTime.Parse(GetText(CurrentDateInput.Document));
+            booking.StartLocation = GetText(CurrentStartInput.Document);
+            booking.EndLocation = GetText(CurrentEndInput.Document);
+            booking.PaymentAmount = Double.Parse(GetText(CurrentPaymentInput.Document));
+            booking.PayedFor = Boolean.Parse(GetText(CurrentPayedInput.Document));
+            booking.Account = accountController.Account;
+            bookingController.ChangeBooking(booking);
+       
         }
 
         private string GetText(FlowDocument flowDocument) {
@@ -72,6 +72,9 @@ namespace InternalClientSide.Gui {
         }
 
         private void GetAccount(object sender, RoutedEventArgs e) {
+            CurrentNameInput.Document.Blocks.Clear();
+            CurrentEmailInput.Document.Blocks.Clear();
+            CurrentPhoneInput.Document.Blocks.Clear();
             string email = GetText(EmailInput.Document);
             Account account = accountController.GetAccount(email);
             if (account != null) {
@@ -91,10 +94,34 @@ namespace InternalClientSide.Gui {
         }
 
         private void AccountBookings_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+            CurrentCarRegistrationInput.Document.Blocks.Clear();
+            CurrentDateInput.Document.Blocks.Clear();
+            CurrentStartInput.Document.Blocks.Clear();
+            CurrentEndInput.Document.Blocks.Clear();
+            CurrentPaymentInput.Document.Blocks.Clear();
+            CurrentPayedInput.Document.Blocks.Clear();
             Booking booking = (Booking) AccountBookings.SelectedItem;
-            List<Booking> bookings = (List<Booking>) AccountBookings.SelectedItems;
+            List<Booking> bookings = (List<Booking>)AccountBookings.ItemsSource;
             DateTime date = booking.BookingDate;
-
+            bool found = false;
+            int index = 0;
+            Booking result = null;
+            while (!found && index < bookings.Count) {
+                if (bookings[index].BookingDate.Equals(date)) {
+                    result = bookings[index];
+                    found = true;
+                }
+                else {
+                    index++;
+                }
+            }
+            CurrentCarRegistrationInput.AppendText(result.BookingCar.RegistrationNumber);
+            CurrentDateInput.AppendText(result.BookingDate.ToString());
+            CurrentStartInput.AppendText(result.StartLocation);
+            CurrentEndInput.AppendText(result.EndLocation);
+            CurrentPaymentInput.AppendText(result.PaymentAmount.ToString());
+            CurrentPayedInput.AppendText(result.PayedFor.ToString());
+                
 
 
         }
