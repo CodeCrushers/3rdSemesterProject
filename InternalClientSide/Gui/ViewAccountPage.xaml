@@ -55,7 +55,7 @@
             <RichTextBox Name="CurrentEmailInput" Grid.Row="5" Height="20">
                 <FlowDocument/>
             </RichTextBox>
-            <Button Name="ChangeAccountButton" Grid.Row="5" Grid.Column="1" Height="20" Width="200" Click="ChangeAccount" Margin="9.8,6,56.6,6.8">
+            <Button Name="ChangeAccountButton" Grid.Row="5" Grid.Column="1" Height="20" Click="ChangeAccount" Margin="9.8,6,56.6,6.8">
                 Change account info
             </Button>
             <Grid  Grid.Row="7" Grid.RowSpan="8">
@@ -63,11 +63,11 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding BookingCar.SerialNumber}"> </GridViewColumn>
-                            <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding BookingDate}"></GridViewColumn>
-                            <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding StartLocation}"></GridViewColumn>
-                            <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding EndLocation}"></GridViewColumn>
-                            <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding PaymentAmount}"></GridViewColumn>
-                            <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding PayedFor}"></GridViewColumn>
+                            <GridViewColumn Header="Date" DisplayMemberBinding="{Binding BookingDate}"></GridViewColumn>
+                            <GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartLocation}"></GridViewColumn>
+                            <GridViewColumn Header="End" DisplayMemberBinding="{Binding EndLocation}"></GridViewColumn>
+                            <GridViewColumn Header="Payment" DisplayMemberBinding="{Binding PaymentAmount}"></GridViewColumn>
+                            <GridViewColumn Header="Payed" DisplayMemberBinding="{Binding PayedFor}"></GridViewColumn>
                         </GridView>
                         
                     </ListView.View>

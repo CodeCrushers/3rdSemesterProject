@@ -23,10 +23,12 @@ namespace InternalClientSide.Gui {
     public partial class ViewAccountPage : Page {
 
         private AccountController accountController;
+        private BookingController bookingController;
         public ViewAccountPage() {
             InitializeComponent();
             AccountBookings.DataContext = null;
             accountController = new AccountController();
+            bookingController = new BookingController();
         }
 
         private void ChangeAccount(object sender, RoutedEventArgs e) {
@@ -58,9 +60,14 @@ namespace InternalClientSide.Gui {
                 CurrentEmailInput.AppendText(account.Email);
                 CurrentPhoneInput.AppendText(account.Phone);
             }
-            
+            List<Booking> bookings = GetBookings(account.Id);
+            AccountBookings.DataContext = bookings;
 
             //Console.WriteLine(response.Result.Content.ReadAsAsync<IEnumrable<Account>>);
+        }
+
+        private List<Booking> GetBookings(string id) {
+            return bookingController.GetBookings(id);
         }
 
     }

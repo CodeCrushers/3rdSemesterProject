@@ -21,7 +21,7 @@ namespace InternalClientSide.Gui {
     public partial class CarPage : Page {
         public CarPage() {
             InitializeComponent();
-            carsGrid.DataContext = Car.GetCars();
+            //carsGrid.DataContext = Car.GetCars();
         }
     }
 }
