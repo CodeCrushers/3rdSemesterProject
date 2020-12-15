@@ -32,7 +32,7 @@ namespace RESTServices.Controllers {
 
         [HttpGet]
         [ResponseType(typeof(IEnumerable<Booking>))]
-        public HttpResponseMessage Get(HttpRequestMessage request) {
+        public HttpResponseMessage GetAll(HttpRequestMessage request) {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
             try {
                 IEnumerable<Booking> list = this.Logic.GetAllBookings();
@@ -45,12 +45,27 @@ namespace RESTServices.Controllers {
             return response;
         }
 
-        [HttpGet, Route("{id}")]
-        [ResponseType(typeof(Booking))]
-        public HttpResponseMessage Get(HttpRequestMessage request, string id) {
+        [HttpGet, Route("account/{accountId}")]
+        [ResponseType(typeof(IEnumerable<Booking>))]
+        public HttpResponseMessage GetByAccountId(HttpRequestMessage request, string accountId) {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
             try {
-                Booking booking = this.Logic.GetBooking(id);
+                IEnumerable<Booking> list = this.Logic.GetBookingsByAccountId(accountId);
+                if (list != null && list.Any()) {
+                    response = request.CreateResponse(HttpStatusCode.OK, list);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return response;
+        }
+
+        [HttpGet, Route("{id}")]
+        [ResponseType(typeof(Booking))]
+        public HttpResponseMessage GetByBookingId(HttpRequestMessage request, string id) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                Booking booking = this.Logic.GetBookingById(id);
                 if (booking != null) {
                     response = request.CreateResponse(HttpStatusCode.OK, booking);
                 }
