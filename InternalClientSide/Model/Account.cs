@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace InternalClientSide.Model {
-    class Account {
+    public class Account {
 
         public int Id { get; set; }
         public string Name { get; set; }
