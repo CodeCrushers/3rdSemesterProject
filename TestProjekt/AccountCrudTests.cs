@@ -13,7 +13,7 @@ namespace TestProjekt {
          * For this test to work, it is a requirement for all test methods to run within the same instance, and that they run in order
          * This can be done by selecting the group as a whole within the testing window and testing them there
          */
-
+        /*
         public static int accountId;
         public static Account generatedAccount;
         public static Account DatabaseAccount;
@@ -100,6 +100,6 @@ namespace TestProjekt {
             Assert.IsTrue(result);
 
         }
-
+        */
     }
 }

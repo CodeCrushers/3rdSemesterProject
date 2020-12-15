@@ -1,5 +1,4 @@
-﻿using RESTServices.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,6 +19,8 @@ namespace RESTServices.Models {
 
         public int Capacity { get; set; }
 
-        public Manufacturer Manufacturer { get; set; }
+        public string LocationId { get; set; }
+
+        public bool OnRoute { get; set; }
     }
 }
