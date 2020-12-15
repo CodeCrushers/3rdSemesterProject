@@ -10,121 +10,126 @@ using System.Web;
 namespace RESTServices.Database {
     public class AccountDB : ICRUD<Account> {
 
-        private static string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
-
-        public AccountDB() {
-        }
+        private static string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         public object Create(Account entity) {
-            int id;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber, Password) OUTPUT INSERTED.id VALUES (@name, @email, @phonenumber, @password)";
+            object o = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber)";
+                        cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("passowrd", entity.Password);
-                        id = (int)cmd.ExecuteScalar();
+                        o = cmd.ExecuteScalar();
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
-                scope.Complete();
-            }
-            return id;
-        }
-
-        public object Delete(object var) {
-            Object o = null;
-            if (var is int) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "DELETE FROM Accounts OUTPUT DELETED.id WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", var);
-                            o = cmd.ExecuteScalar();
-                        }
-                    }
-                    scope.Complete();
-                } 
             }
             return o;
         }
 
         public Account Get(object var) {
             Account account = null;
-            if (var is int) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", var);
+            if (var is string) {
+                string value = (string)var;
+                string type;
+                if (value.Contains("@")) {
+                    type = "Email";
+                } else {
+                    type = "Id";
+                }
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            switch(type) {
+                                case "Email":
+                                    cmd.CommandText = "SELECT * FROM Account WHERE email = @value";
+                                    break;
+                                case "Id":
+                                    cmd.CommandText = "SELECT * FROM Account WHERE id = @value";
+                                    break;
+                            }
+                            cmd.Parameters.AddWithValue("value", value);
                             var reader = cmd.ExecuteReader();
                             account = CreateObject(reader, true);
+                        } catch (Exception e) {
+                            throw e;
                         }
                     }
-                    scope.Complete();
                 } 
             }
             return account;
         }
 
-        public Account Get(string email) {
-            Account account = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Accounts WHERE email = @email";
-                        cmd.Parameters.AddWithValue("email", email);
-                        var reader = cmd.ExecuteReader();
-                        if (reader != null) {
-                            account = CreateObject(reader, true);
-                        }
-                    }
-                }
-                scope.Complete();
-            }
-            return account;
-        }
-
         public IEnumerable<Account> GetAll() {
-            IEnumerable<Account> accounts;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT id, name, email, phonenumber, Password FROM Accounts";
+            IEnumerable<Account> accounts = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Account";
                         var reader = cmd.ExecuteReader();
                         accounts = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
             return accounts;
         }
 
-        public void Update(Account entity) {
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber, Password = @password WHERE id = @id";
+        public bool Update(Account entity) {
+            bool result = true;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.Parameters.AddWithValue("name", entity.Name);
                         cmd.Parameters.AddWithValue("email", entity.Email);
                         cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                        cmd.Parameters.AddWithValue("password", entity.Password);
                         cmd.ExecuteNonQuery();
+                    } catch (Exception e) {
+                        result = false;
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
+            return result;
         }
 
-        public IEnumerable<Account> CreateList(SqlDataReader reader) {
+        public object Delete(object var) {
+            object o = null;
+            if (var is string) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "DELETE FROM Account OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception e) {
+                            o = false;
+                            throw e;
+                        }
+                    }
+                }
+            } else {
+                o = false;
+            }
+            return o;
+        }
+
+        /*
+         * These methods below are here to create objects of type of this DB class
+         */
+        public static IEnumerable<Account> CreateList(SqlDataReader reader) {
             List<Account> accounts = new List<Account>();
             while(reader.Read()) {
                 Account a = CreateObject(reader, false);
@@ -138,11 +143,10 @@ namespace RESTServices.Database {
                 reader.Read();
             }
             Account a = new Account() {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Id = reader.GetString(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
                 Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
-                Password = reader.GetString(reader.GetOrdinal("Password"))
             };
             return a;
         }
