@@ -44,13 +44,28 @@ namespace RESTServices.Controllers {
             return response;
         }
 
-        [HttpGet, Route("{value}")]
+        [HttpGet, Route("id/{id}")]
         [ResponseType(typeof(Account))]
-        public HttpResponseMessage Get(HttpRequestMessage request, string value) {
+        public HttpResponseMessage GetAccountById(HttpRequestMessage request, string id) {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
             try {
-                Account account = this.Logic.GetAccount(value);
+                Account account = this.Logic.GetAccountById(id);
                 if(account != null) {
+                    response = request.CreateResponse(HttpStatusCode.OK, account);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return response;
+        }
+
+        [HttpGet, Route("email/{email}")]
+        [ResponseType(typeof(Account))]
+        public HttpResponseMessage GetAccountByEmail(HttpRequestMessage request, string email) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                Account account = this.Logic.GetAccountByEmail(email);
+                if (account != null) {
                     response = request.CreateResponse(HttpStatusCode.OK, account);
                 }
             } catch (Exception) {

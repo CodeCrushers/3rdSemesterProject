@@ -9,7 +9,7 @@ using System.Web;
 
 namespace RESTServices.Database {
 
-    public class CarDB : ICRUD<Car> {
+    public class CarDB {
 
         private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
