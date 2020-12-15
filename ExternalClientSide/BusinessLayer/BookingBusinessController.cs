@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExternalClinetSide.Models;
+using ExternalClientSide.Models;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -9,26 +9,19 @@ using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using Microsoft.AspNet.Identity;
-using ExternalClientSide.Models;
-using ExternalClientSide;
 using System.Web.Script.Serialization;
 using System.Text;
 using System.Net;
 
-namespace ExternalClinetSide.BusinessLayer
+namespace ExternalClientSide.BusinessLayer
 {
     public class BookingBusinesController
     {
         string baseURL = "https://localhost:44346/";
-        private ApplicationUserManager _userManager;
-        private ApplicationSignInManager _signInManager;
-
-   
         public async void CreateBooking(Booking booking)
         {
             Account account = new Account();
             Car car = new Car();
-            string id = "";
             //getting Account
             using (var client = new HttpClient())
             {
@@ -37,7 +30,7 @@ namespace ExternalClinetSide.BusinessLayer
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 HttpResponseMessage res = new HttpResponseMessage();
-                id = HttpContext.Current.User.Identity.GetUserId();
+                var id = HttpContext.Current.User.Identity.GetUserId();
                 res  = await client.GetAsync("api/Account/id/" + id);
                 if (res.IsSuccessStatusCode)
                 {
@@ -76,6 +69,7 @@ namespace ExternalClinetSide.BusinessLayer
                 var json = new JavaScriptSerializer().Serialize(booking);
                 var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = client.PostAsync("api/Booking", stringContent).Result;
+
                 if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
                 {
                     Console.WriteLine("it worked");

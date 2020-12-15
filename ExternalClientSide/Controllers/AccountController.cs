@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using System.Net.Http;
 using System.Text;
 using System.Net;
+using Account = ExternalClientSide.Models.Account;
 
 namespace ExternalClientSide.Controllers
 {

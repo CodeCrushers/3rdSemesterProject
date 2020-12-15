@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ExternalClinetSide.Models
+namespace ExternalClientSide.Models
 {
     public class Car
     {
@@ -20,5 +20,9 @@ namespace ExternalClinetSide.Models
         public int Charge { get; set; }
 
         public int Capacity { get; set; }
+
+        public string LocationId { get; set; }
+
+        public bool OnRoute { get; set; }
     }
 }

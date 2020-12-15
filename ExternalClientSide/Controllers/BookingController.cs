@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using ExternalClinetSide.Models;
-using ExternalClinetSide.BusinessLayer;
+using ExternalClientSide.Models;
+using ExternalClientSide.BusinessLayer;
 using System.Threading.Tasks;
 
-namespace ExternalClinetSide.Controllers
+namespace ExternalClientSide.Controllers
 {
     public class BookingController : Controller
     {
