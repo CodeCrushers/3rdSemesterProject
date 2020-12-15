@@ -22,7 +22,7 @@ namespace InternalClientSide.Controllers {
         }
 
         public Account GetAccount(string email) {
-            string fullUrl = baseurl + "account/" + email + "/";
+            string fullUrl = baseurl + "account/email/" + email + "/";
             try {
             var response = HttpClient.GetAsync(fullUrl).Result;
             response.EnsureSuccessStatusCode();

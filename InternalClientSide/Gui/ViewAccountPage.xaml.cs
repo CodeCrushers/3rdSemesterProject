@@ -25,6 +25,7 @@ namespace InternalClientSide.Gui {
         private AccountController accountController;
         private BookingController bookingController;
         private CarController carController;
+        private Booking currentBooking;
 
         public ViewAccountPage() {
             InitializeComponent();
@@ -56,6 +57,7 @@ namespace InternalClientSide.Gui {
             booking.PaymentAmount = Double.Parse(GetText(CurrentPaymentInput.Document));
             booking.PayedFor = Boolean.Parse(GetText(CurrentPayedInput.Document));
             booking.Account = accountController.Account;
+            booking.Id = currentBooking.Id;
             bookingController.ChangeBooking(booking);
        
         }
@@ -109,6 +111,7 @@ namespace InternalClientSide.Gui {
             while (!found && index < bookings.Count) {
                 if (bookings[index].BookingDate.Equals(date)) {
                     result = bookings[index];
+                    currentBooking = result;
                     found = true;
                 }
                 else {

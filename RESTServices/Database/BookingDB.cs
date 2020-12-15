@@ -104,7 +104,7 @@ namespace RESTServices.Database {
                         cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
                         cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
                         cmd.Parameters.AddWithValue("carRegistrationNumber", entity.BookingCar.RegistrationNumber);
-                        cmd.Parameters.AddWithValue("accoutnId", entity.Account.Id);
+                        cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.ExecuteNonQuery();
                     } catch (Exception e) {
