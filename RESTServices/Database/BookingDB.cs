@@ -97,14 +97,14 @@ namespace RESTServices.Database {
                 using (SqlCommand cmd = con.CreateCommand()) {
                     try {
                         cmd.CommandText = "UPDATE Booking SET payedFor = @payedFor, paymentAmount = @paymentAmount, startLocation = @startLocation, endLocation = @endLocation," +
-                                            " bookingDate = @bookingDate, bookingRegistrationNumber = @bookingRegistrationNumber, accountId = @accountId WHERE id = @id";
+                                            " bookingDate = @bookingDate, carRegistrationNumber = @carRegistrationNumber, accountId = @accountId WHERE id = @id";
                         cmd.Parameters.AddWithValue("payedFor", entity.PayedFor);
                         cmd.Parameters.AddWithValue("paymentAmount", entity.PaymentAmount);
                         cmd.Parameters.AddWithValue("startLocation", entity.StartLocation);
                         cmd.Parameters.AddWithValue("endLocation", entity.EndLocation);
                         cmd.Parameters.AddWithValue("bookingDate", entity.BookingDate);
-                        cmd.Parameters.AddWithValue("bookingRegistrationNumber", entity.BookingCar.RegistrationNumber);
-                        cmd.Parameters.AddWithValue("accountId", entity.Account.Id);
+                        cmd.Parameters.AddWithValue("carRegistrationNumber", entity.BookingCar.RegistrationNumber);
+                        cmd.Parameters.AddWithValue("accoutnId", entity.Account.Id);
                         cmd.Parameters.AddWithValue("id", entity.Id);
                         cmd.ExecuteNonQuery();
                     } catch (Exception e) {

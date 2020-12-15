@@ -39,7 +39,7 @@ namespace RESTServices.LogicLayer {
             Booking booking = null;
             booking = _bookingDB.GetBookingById(id);
             Car car = _carDB.Get(booking.BookingCar.RegistrationNumber);
-            Account account = _accountDB.Get(booking.Account.Id);
+            Account account = _accountDB.GetAccountById(booking.Account.Id);
             if (car != null) {
                 booking.BookingCar = car;
             }
