@@ -34,6 +34,7 @@ namespace ExternalClientSide.Controllers
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            
         }
 
         public ApplicationSignInManager SignInManager
@@ -103,10 +104,6 @@ namespace ExternalClientSide.Controllers
             }
         }
 
-
-        //
-        // GET: /Account/VerifyCode
-        [Authorize]
 
         //
         // GET: /Account/Register
