@@ -22,18 +22,17 @@ namespace InternalClientSide.Gui {
         public AccountPage() {
             InitializeComponent();
             pages = new List<Page>();
-            pages.Add(new CreateAccountPage());
             pages.Add(new ViewAccountPage());
             AccountContent.DataContext = pages[0];
         }
 
-        public void CreateUserPage(object sender, MouseButtonEventArgs e) {
-            AccountContent.DataContext = pages[0];
+        //public void createuserpage(object sender, mousebuttoneventargs e) {
+        //    accountcontent.datacontext = pages[0];
 
-        }
+        //}
 
         public void ViewUserPage(object sender, MouseButtonEventArgs e) {
-            AccountContent.DataContext = pages[1];
+            AccountContent.DataContext = pages[0];
         }
     }
 }

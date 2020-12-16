@@ -20,7 +20,6 @@
                     <Setter Property="Padding" Value="10,0,10,0"/>
                 </Style>
             </ListBox.ItemContainerStyle>
-            <ListBoxItem MouseLeftButtonUp="CreateUserPage" HorizontalAlignment="Left">Create user</ListBoxItem>
             <ListBoxItem MouseLeftButtonUp="ViewUserPage" HorizontalAlignment="Left">View user</ListBoxItem>
         </ListBox>
         <Frame DockPanel.Dock="Bottom" Name="AccountContent" Content="{Binding}" JournalOwnership="UsesParentJournal"/>
