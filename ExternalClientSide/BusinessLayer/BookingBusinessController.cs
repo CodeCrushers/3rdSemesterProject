@@ -40,6 +40,7 @@ namespace ExternalClientSide.BusinessLayer
                     account = JsonConvert.DeserializeObject<Account>(AccountResponse);
                 }
             }
+            booking.Account = account;
 
             // getting car
             using (var client = new HttpClient())
@@ -59,8 +60,6 @@ namespace ExternalClientSide.BusinessLayer
                 }
 
             }
-
-            booking.Account = account;
             booking.BookingCar = car;
 
             //post to api booking
