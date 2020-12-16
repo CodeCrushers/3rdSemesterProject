@@ -268,8 +268,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Booking\BookingMap.cshtml" />
-    <Content Include="Views\Booking\BookingTest.cshtml" />
-    <Content Include="Views\Booking\View.cshtml" />
+    <Content Include="Views\Booking\BookingSucces.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

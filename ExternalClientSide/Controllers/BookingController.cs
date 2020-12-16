@@ -23,11 +23,22 @@ namespace ExternalClientSide.Controllers
             if(ModelState.IsValid)
             {
                 var booking = new Booking { StartLocation = bookingInput.StartLocation, EndLocation = bookingInput.EndLocation, PayedFor = true, BookingDate = DateTime.Now, PaymentAmount = bookingInput.PaymentAmount};
-                BookingBController.CreateBooking(booking); 
+                if (await BookingBController.CreateBooking(booking) == true)
+                {
+                    return RedirectToAction("BookingSucces", "Booking");
+                }
+                    return RedirectToAction("Login", "Account");
+                
 
 
             }
+            return RedirectToAction("Login", "Account");
 
+            
+        }
+
+        public ActionResult BookingSucces()
+        {
             return View();
         }
     }
