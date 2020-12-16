@@ -87,7 +87,7 @@ namespace RESTServices.Controllers {
             return response;
         }
 
-        [HttpDelete, Route("{id}")]
+        [HttpDelete, Route("id/{id}")]
         public HttpResponseMessage Delete(HttpRequestMessage request, string id) {
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
             try {
