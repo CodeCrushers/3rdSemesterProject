@@ -1,0 +1,203 @@
+﻿@{
+    Layout = null;
+}
+
+@model ExternalClientSide.Models.Booking
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Test</title>
+
+    @using (Html.BeginForm("Booking", "Booking", FormMethod.Post))
+    {
+        //@Html.HiddenFor(m => m.StartLocation, htmlAttributes: new { id = "origin-inputHidden" })
+        //@Html.HiddenFor(m => m.StartLocation, htmlAttributes: new { id = "destination-inputHidden" })
+        @Html.HiddenFor(m => m.PaymentAmount, htmlAttributes: new { id = "PaymentAmountHidden" })
+
+        <input id="origin-input"
+               class="controls"
+               type="text"
+               placeholder="fra location" />
+
+        <input id="destination-input"
+               class="controls"
+               type="text"
+               placeholder=" location" />
+        //test
+        @Html.TextBoxFor(m => m.StartLocation, htmlAttributes: new { id = "origin-inputHidden" })
+        @Html.TextBoxFor(m => m.EndLocation, htmlAttributes: new { id = "destination-inputHidden" })
+
+        <input type="submit" value="submit" />
+
+    }
+
+    <!--Stylesheet-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+
+    <!--Script-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <!-- Google Maps JavaScript library -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIKpk0KASgedmOE1R7KcjFgSYjk3rZ6Ac&callback=initMap&libraries=places&v=weekly" async defer></script>
+    <style type="text/css">
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .controls {
+            margin-top: 10px;
+            border: 1px solid transparent;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            height: 32px;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+
+        #origin-input,
+        #destination-input {
+            background-color: #fff;
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+            margin-left: 12px;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 200px;
+        }
+
+            #origin-input:focus,
+            #destination-input:focus {
+                border-color: #4d90fe;
+            }
+
+        #mode-selector {
+            color: #fff;
+            background-color: #4d90fe;
+            margin-left: 12px;
+            padding: 5px 11px 0px 11px;
+        }
+
+            #mode-selector label {
+                font-family: Roboto;
+                font-size: 13px;
+                font-weight: 300;
+            }
+    </style>
+
+</head>
+<body>
+    <div style="display: none">
+
+    </div>
+
+    <div id="map"></div>
+</body>
+</html>
+
+<script>
+
+    var distanceMeter = 0;
+    var distanceKMeter = 0;
+    var destinationInputHidden = document.getElementById("destination-inputHidden");
+    var originInputHidden = document.getElementById("origin-inputHidden");
+    function initMap() {
+        var danmark = new google.maps.LatLng(56.223103, 9.341210);
+        const map = new google.maps.Map(document.getElementById("map"), {
+            mapTypeControl: false,
+            zoom: 7,
+            center: danmark
+        });
+        new AutocompleteDirectionsHandler(map);
+    }
+
+    class AutocompleteDirectionsHandler {
+        constructor(map) {
+            this.map = map;
+            this.originPlaceId = "";
+            this.destinationPlaceId = "";
+            this.travelMode = google.maps.TravelMode.DRIVING;
+            this.directionsService = new google.maps.DirectionsService();
+            this.directionsRenderer = new google.maps.DirectionsRenderer();
+            this.directionsRenderer.setMap(map);
+            const originInput = document.getElementById("origin-input");
+            const destinationInput = document.getElementById("destination-input");
+            const originAutocomplete = new google.maps.places.Autocomplete(originInput);
+            originAutocomplete.setFields(["place_id"]);
+            const destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput);
+            destinationAutocomplete.setFields(["place_id"]);
+            this.setupPlaceChangedListener(originAutocomplete, "ORIG");
+            this.setupPlaceChangedListener(destinationAutocomplete, "DEST");
+            this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
+            this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+            this.route();
+
+        }
+
+
+        setupPlaceChangedListener(autocomplete, mode) {
+            autocomplete.bindTo("bounds", this.map);
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+
+                if (!place.place_id) {
+                    window.alert("Please select an option from the dropdown list.");
+                    return;
+                }
+
+                if (mode === "ORIG") {
+                    this.originPlaceId = place.place_id;
+                } else {
+                    this.destinationPlaceId = place.place_id;
+                }
+                this.route();
+            });
+        }
+        route() {
+            if (!this.originPlaceId || !this.destinationPlaceId) {
+                return;
+            }
+            const me = this;
+            this.directionsService.route(
+                {
+                    origin: { placeId: this.originPlaceId },
+                    destination: { placeId: this.destinationPlaceId },
+                    travelMode: this.travelMode,
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        distanceMeter = response.routes[0].legs[0].distance.value;
+                        console.log(distanceMeter);
+                        distanceKMeter = response.routes[0].legs[0].distance.value / 1000;
+                        console.log(distanceKMeter);
+                        document.getElementById("PaymentAmountHidden").value = Math.ceil(distanceKMeter + 50);
+                        console.log(document.getElementById("PaymentAmountHidden").value);
+                        console.log(originInputHidden.value);
+                        me.directionsRenderer.setDirections(response);
+                    } else {
+                        window.alert("Directions request failed due to " + status);
+                    }
+                }
+            );
+        }
+    }
+
+
+
+</script>
