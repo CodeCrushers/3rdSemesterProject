@@ -11,8 +11,7 @@ namespace RESTServices.Models {
         object Create(T entity);
         T Get(object var);
         IEnumerable<T> GetAll();
-        void Update(T entity);
+        bool Update(T entity);
         object Delete(object var);
-        IEnumerable<T> CreateList(SqlDataReader reader);
     }
 }

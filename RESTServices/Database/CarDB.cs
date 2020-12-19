@@ -9,96 +9,132 @@ using System.Web;
 
 namespace RESTServices.Database {
 
-    public class CarDB : ICRUD<Car> {
+    public class CarDB {
+
         private string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
+        public CarDB() {
+
+        }
+
         public object Create(Car entity) {
-            object  variable = null;
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "INSERT INTO Cars (brand, model, registrationNumber) OUTPUT INSERTED.registrationNumber VALUES (@brand, @model, @registrationNumber) ";
+            object o = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "INSERT INTO Car (brand, model, registrationNumber, leasingYear, distance, charge, capacity, locationId, onRoute) OUTPUT INSERTED.registrationNumber " +
+                            "VALUES (@brand, @model, @registrationNumber, @leasingYear, @distance, @charge, @capacity, @locationId, @onRoute)";
                         cmd.Parameters.AddWithValue("brand", entity.Brand);
                         cmd.Parameters.AddWithValue("model", entity.Model);
                         cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
-                        variable = cmd.ExecuteScalar();
-                    }
-                }
-                scope.Complete();
-            }
-            return variable;
-        }
-
-
-        public object Delete(object reg) {
-            object var = null;
-            if (reg is string) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "DELETE FROM Cars OUTPUT DELETED.id WHERE id = @id";
-                            cmd.Parameters.AddWithValue("id", reg);
-                            var = cmd.ExecuteScalar();
-                        }
+                        cmd.Parameters.AddWithValue("leasingYear", entity.LeasingYear);
+                        cmd.Parameters.AddWithValue("distance", entity.Distance);
+                        cmd.Parameters.AddWithValue("charge", entity.Charge);
+                        cmd.Parameters.AddWithValue("capacity", entity.Capacity);
+                        cmd.Parameters.AddWithValue("locationId", entity.LocationId);
+                        cmd.Parameters.AddWithValue("onRoute", entity.OnRoute);
+                        o = cmd.ExecuteScalar();
+                    } catch (Exception e) {
+                        o = false;
+                        throw e;
                     }
                 }
             }
-            return var;
+            return o;
         }
 
         public Car Get(object var) {
             Car car = null;
             if (var is string) {
-                using (TransactionScope scope = new TransactionScope()) {
-                    using (SqlConnection con = new SqlConnection(_connectionString)) {
-                        con.Open();
-                        using (SqlCommand cmd = con.CreateCommand()) {
-                            cmd.CommandText = "SELECT * FROM Cars WHERE registrationNumber = @registrationNumber";
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "SELECT * FROM Car WHERE registrationNumber = @registrationNumber";
                             cmd.Parameters.AddWithValue("registrationNumber", var);
                             var reader = cmd.ExecuteReader();
                             car = CreateObject(reader, true);
+                        } catch (Exception e) {
+                            throw e;
                         }
                     }
-                    scope.Complete();
-                } 
+                }
             }
             return car;
         }
 
         public IEnumerable<Car> GetAll() {
             IEnumerable<Car> list = null;
-            using(TransactionScope scope = new TransactionScope()) {
-                using(SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using(SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "SELECT * FROM Cars";
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "SELECT * FROM Car";
                         var reader = cmd.ExecuteReader();
                         list = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
                     }
                 }
-                scope.Complete();
+
             }
             return list;
         }
 
-        public void Update(Car entity) {
-            using (TransactionScope scope = new TransactionScope()) {
-                using (SqlConnection con = new SqlConnection(_connectionString)) {
-                    con.Open();
-                    using (SqlCommand cmd = con.CreateCommand()) {
-                        cmd.CommandText = "UPDATE Cars SET brand = @brand, model = @model, registrationNumber = @registrationNumber";
+        public bool Update(Car entity) {
+            bool result = true;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
+                con.Open();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "UPDATE Car SET " +
+                                            "brand = @brand, model = @model, leasingYear = @leasingYear, distance = @distance, charge = @charge, capacity = @capacity, locationId = @locationId, onRoute = @onRoute " +
+                                            "WHERE registrationNumber = @registrationNumber";
                         cmd.Parameters.AddWithValue("brand", entity.Brand);
                         cmd.Parameters.AddWithValue("model", entity.Model);
                         cmd.Parameters.AddWithValue("registrationNumber", entity.RegistrationNumber);
+                        cmd.Parameters.AddWithValue("leasingYear", entity.LeasingYear);
+                        cmd.Parameters.AddWithValue("distance", entity.Distance);
+                        cmd.Parameters.AddWithValue("charge", entity.Charge);
+                        cmd.Parameters.AddWithValue("capacity", entity.Capacity);
+                        cmd.Parameters.AddWithValue("locationId", entity.LocationId);
+                        cmd.Parameters.AddWithValue("onRoute", entity.OnRoute);
                         cmd.ExecuteNonQuery();
+                    } catch (Exception e) {
+                        result = false;
+                        throw e;
                     }
                 }
-                scope.Complete();
             }
+            return result;
         }
 
+        public object Delete(object reg) {
+            object o = null;
+            if (reg is string) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "DELETE FROM Car OUTPUT DELETED.registrationNumber WHERE registrationNumber = @reg";
+                            cmd.Parameters.AddWithValue("reg", reg);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception e) {
+                            o = false;
+                            throw e;
+                        }
+                    }
+                }
+            } else {
+                o = false;
+            }
+            return o;
+        }
+
+        /*
+         * These methods below are here to create objects of type of this DB class
+         */
         public IEnumerable<Car> CreateList(SqlDataReader reader) {
             List<Car> bookings = new List<Car>();
             while (reader.Read()) {
@@ -120,6 +156,8 @@ namespace RESTServices.Database {
             car.Distance = reader.GetInt32(reader.GetOrdinal("distance"));
             car.Charge = reader.GetInt32(reader.GetOrdinal("charge"));
             car.Capacity = reader.GetInt32(reader.GetOrdinal("capacity"));
+            car.OnRoute = reader.GetBoolean(reader.GetOrdinal("onRoute"));
+            car.LocationId = reader.GetString(reader.GetOrdinal("locationId"));
             return car;
         }
 

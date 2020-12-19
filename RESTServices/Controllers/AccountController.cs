@@ -1,5 +1,5 @@
-﻿using RESTServices.ControlLayer;
-using RESTServices.Database;
+﻿using RESTServices.Database;
+using RESTServices.LogicLayer;
 using RESTServices.Models;
 using System;
 using System.Collections.Generic;
@@ -7,57 +7,97 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace RESTServices.Controllers {
 
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController {
 
-        private AccountDB db = new AccountDB();
-        private FormValidation validation = new FormValidation();
-
-        [HttpGet]
-        public IEnumerable<Account> Get() {
-            return db.GetAll();
-        }
-
-        [HttpGet, Route("{email}")]
-        public Account Get(string email) {
-            return db.Get(email);
-        }
+        private AccountLogic Logic = new AccountLogic();
 
         [HttpPost]
-        public void Post(Account val) {
-            if(val != null) {
-                db.Create(val);
+        public HttpResponseMessage Post(HttpRequestMessage request, Account val) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.CreateAccount(val)) {
+                    response = request.CreateResponse(HttpStatusCode.Created);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
-            /*
-            HttpStatusCode code;
-            if (validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
-                code = HttpStatusCode.Accepted;
-            } else {
-                code = HttpStatusCode.BadRequest;
-            }
+            return response;
+        }
 
-            return code;
-            */
+        [HttpGet]
+        [ResponseType(typeof(IEnumerable<Account>))]
+        public HttpResponseMessage Get(HttpRequestMessage request) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                IEnumerable<Account> list = this.Logic.GetAllAccounts();
+                if(list != null && list.Any()) {
+                    response = request.CreateResponse(HttpStatusCode.OK, list);
+                } 
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return response;
+        }
+
+        [HttpGet, Route("id/{id}")]
+        [ResponseType(typeof(Account))]
+        public HttpResponseMessage GetAccountById(HttpRequestMessage request, string id) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                Account account = this.Logic.GetAccountById(id);
+                if(account != null) {
+                    response = request.CreateResponse(HttpStatusCode.OK, account);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return response;
+        }
+
+        [HttpGet, Route("email/{email}")]
+        [ResponseType(typeof(Account))]
+        public HttpResponseMessage GetAccountByEmail(HttpRequestMessage request, string email) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                Account account = this.Logic.GetAccountByEmail(email);
+                if (account != null) {
+                    response = request.CreateResponse(HttpStatusCode.OK, account);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return response;
         }
 
         [HttpPut]
-        public HttpStatusCode Put(Account val) {
-            HttpStatusCode code;
-            if(validation.PasswordValidation(val.Password) && validation.EmailValidation(val.Email)) {
-                db.Update(val);
-                code = HttpStatusCode.Created;
-            } else {
-                code = HttpStatusCode.BadRequest;
+        public HttpResponseMessage Put(HttpRequestMessage request, Account val) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.EditAccount(val)) {
+                    response = request.CreateResponse(HttpStatusCode.NoContent);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
-            return code;
+            return response;
         }
 
-        [HttpDelete, Route("{id}")]
-        public void Delete(int id) {
-             db.Delete(id); 
+        [HttpDelete, Route("id/{id}")]
+        public HttpResponseMessage Delete(HttpRequestMessage request, string id) {
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotFound);
+            try {
+                if (this.Logic.DeleteAccount(id)) {
+                    response = request.CreateResponse(HttpStatusCode.Accepted);
+                }
+            } catch (Exception) {
+                response = request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return response;
         }
     }
 }

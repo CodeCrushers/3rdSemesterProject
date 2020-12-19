@@ -18,5 +18,9 @@ namespace RESTServices.Models {
         public int Charge { get; set; }
 
         public int Capacity { get; set; }
+
+        public string LocationId { get; set; }
+
+        public bool OnRoute { get; set; }
     }
 }

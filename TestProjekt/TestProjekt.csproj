@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AccountCrudTests.cs" />
     <Compile Include="BookingCrudTests.cs" />
+    <Compile Include="CarLogicTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
