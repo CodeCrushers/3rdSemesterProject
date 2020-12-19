@@ -82,7 +82,7 @@ namespace RESTServices.Controllers {
                 if (this.Logic.EditBooking(booking)) {
                     response = request.CreateResponse(HttpStatusCode.NoContent);
                 }
-            } catch (Exception) {
+            } catch (Exception e) {
                 response = request.CreateResponse(HttpStatusCode.BadRequest);
             }
             return response;

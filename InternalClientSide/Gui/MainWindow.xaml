@@ -1,0 +1,26 @@
+﻿<Window x:Class="InternalClientSide.Gui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InternalClientSide"
+        mc:Ignorable="d"
+        Title="Frem Til Tiden Internal" Height="550" Width="1000"
+        FontSize="16"
+        WindowStartupLocation="CenterScreen"
+        >
+    <DockPanel x:Name="MainDockPanel" >
+        <ListBox DockPanel.Dock="Left" Background="LightSlateGray">
+            <ListBoxItem MouseLeftButtonUp="OpenMainPage">Home</ListBoxItem>
+            <ListBoxItem MouseLeftButtonUp="OpenAccountPage">Account</ListBoxItem>
+            <ListBoxItem MouseLeftButtonUp="OpenCarPage">Car</ListBoxItem>
+            <ListBoxItem >Admin</ListBoxItem>
+            <ListBoxItem >Options</ListBoxItem>
+        </ListBox>
+        <DockPanel Name="ContentPanel" IsEnabled="True" DockPanel.Dock="Right">
+            <Frame Name="ContentFrame" Content="{Binding}">
+            
+            </Frame>
+        </DockPanel>
+    </DockPanel>
+</Window>

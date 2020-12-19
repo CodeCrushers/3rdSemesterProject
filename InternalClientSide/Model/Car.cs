@@ -8,53 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace InternalClientSide.Model {
-    public class Car : INotifyPropertyChanged {
+    public class Car {
 
-        public string Name { get; set; }
-        public int Id { get; set; }
-        public string SerialNumber { get; set; }
-        public Manufacturer Manufacturer { get; set; }
+        public string Brand { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string Model { get; set; }
 
-        public static Car GetCar() {
-            Car car = new Car() {
-                Name = "Avensis",
-                Id = 1,
-                SerialNumber = "XD123XD",
-                Manufacturer = Manufacturer.TOYOTA
-            };
-            return car;
-        }
+        public string RegistrationNumber { get; set; }
 
-        public static ObservableCollection<Car> GetCars() {
-            ObservableCollection<Car> cars = new ObservableCollection<Car>();
-            cars.Add(new Car() {
-                Name = "Avensis",
-                Id = 1,
-                SerialNumber = "XD123XD",
-                Manufacturer = Manufacturer.TOYOTA
-            });
-            cars.Add(new Car() {
-                Name = "Model S",
-                Id = 2,
-                SerialNumber = "XD456XD",
-                Manufacturer = Manufacturer.TESLA
-            });
-            cars.Add(new Car() {
-                Name = "Fiesta",
-                Id = 3,
-                SerialNumber = "XD789XD",
-                Manufacturer = Manufacturer.FORD
-            });
-            cars.Add(new Car() {
-                Name = "Fiesta",
-                Id = 4,
-                SerialNumber = "XD123123123123XD",
-                Manufacturer = Manufacturer.FORD
-            });
-            return cars;
-        }
+        public string LeasingYear { get; set; }
+
+        public int Distance { get; set; }
+
+        public int Charge { get; set; }
+
+        public int Capacity { get; set; }
+
+        public string LocationId { get; set; }
+
+        public bool OnRoute { get; set; }
+
 
     }
 
