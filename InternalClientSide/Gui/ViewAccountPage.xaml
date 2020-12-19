@@ -1,0 +1,121 @@
+﻿<Page x:Class="InternalClientSide.Gui.ViewAccountPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InternalClientSide.Gui"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ViewAccountPage">
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock  Grid.Column="0" HorizontalAlignment="Right">
+                Email:
+            </TextBlock>
+            <RichTextBox MinWidth="200" Margin="20,0,0,0" Name="EmailInput" Grid.Column="1">
+                <FlowDocument/>
+            </RichTextBox>
+            <Button Margin="20,0,0,0" HorizontalContentAlignment="Stretch" Grid.Column="4"  HorizontalAlignment="Stretch" Click="GetAccount">Search</Button>
+        </Grid>
+        <Grid Margin="0,5,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Name:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" Width="34"/>
+            <TextBlock Grid.Row="2" Text="Phonenumber:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Height="16" Width="76"/>
+            <TextBlock Grid.Row="4" Text="Email:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Height="16" Width="30"/>
+            <TextBlock Grid.Row="6" Text="Bookings:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Height="16" Width="50"/>
+            <RichTextBox Name="CurrentNameInput" Grid.Row="1" Height="20">
+                <FlowDocument/>
+            </RichTextBox>
+            <RichTextBox Name="CurrentPhoneInput" Grid.Row="3" Height="20">
+                <FlowDocument/>
+            </RichTextBox>
+            <RichTextBox Name="CurrentEmailInput" Grid.Row="5" Height="20">
+                <FlowDocument/>
+            </RichTextBox>
+            <Button Name="ChangeAccountButton" Grid.Row="5" Grid.Column="1" Height="20" Click="ChangeAccount" Margin="5,0,5,0">
+                Change account info
+            </Button>
+            <Button Name="ChangeBookingButton" Grid.Column="2" Grid.Row="5" Height="20" Click="ChangeBooking" Margin="5,0,5,0">
+                Change booking info
+            </Button>
+            <Grid  Grid.Row="7" Grid.RowSpan="8" >
+                <ListView Name="AccountBookings" ItemsSource="{Binding}" MouseDoubleClick="AccountBookings_MouseDoubleClick">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Carregistration" DisplayMemberBinding="{Binding BookingCar.RegistrationNumber}"> </GridViewColumn>
+                            <GridViewColumn Header="Date" DisplayMemberBinding="{Binding BookingDate}"></GridViewColumn>
+                            <GridViewColumn Header="Start" DisplayMemberBinding="{Binding StartLocation}"></GridViewColumn>
+                            <GridViewColumn Header="End" DisplayMemberBinding="{Binding EndLocation}"></GridViewColumn>
+                            <GridViewColumn Header="Payment" DisplayMemberBinding="{Binding PaymentAmount}"></GridViewColumn>
+                            <GridViewColumn Header="Payed" DisplayMemberBinding="{Binding PayedFor}"></GridViewColumn>
+                        </GridView>
+                        
+                    </ListView.View>
+
+                </ListView>
+
+            </Grid>
+            <Grid Grid.Row="7" Grid.RowSpan="8" Grid.Column="1" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Carregistration:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" />
+                <TextBlock Grid.Row="2" Text="Date:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" />
+                <TextBlock Grid.Row="4" Text="Start:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="End:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Payment:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Payed:" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="16" />
+                <RichTextBox Name="CurrentCarRegistrationInput" Grid.Row="1" Height="20">
+                    <FlowDocument/>
+                </RichTextBox>
+                <RichTextBox Name="CurrentDateInput" Grid.Row="3" Height="20">
+                    <FlowDocument/>
+                </RichTextBox>
+                <RichTextBox Name="CurrentStartInput" Grid.Row="5" Height="20">
+                    <FlowDocument/>
+                </RichTextBox>
+                <RichTextBox Name="CurrentEndInput" Grid.Row="1" Grid.Column="1" Height="20">
+                    <FlowDocument/>
+                </RichTextBox>
+                <RichTextBox Name="CurrentPaymentInput" Grid.Row="3" Grid.Column="1" Height="20">
+                    <FlowDocument/>
+                </RichTextBox>
+                <RichTextBox Name="CurrentPayedInput" Grid.Row="5" Grid.Column="1" Height="20">
+                    <FlowDocument/>
+                </RichTextBox>
+
+            </Grid>
+        </Grid>
+    </DockPanel>
+
+</Page>

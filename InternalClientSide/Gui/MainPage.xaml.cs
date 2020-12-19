@@ -1,5 +1,4 @@
-﻿using InternalClientSide.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,16 +13,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace InternalClientSide {
+namespace InternalClientSide.Gui {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class MainWindow : Window {
-
-        public MainWindow() {
+    public partial class MainPage : Page {
+        public MainPage() {
             InitializeComponent();
-            carsGrid.DataContext = Car.GetCars();
         }
-
     }
 }
