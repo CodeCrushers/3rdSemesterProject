@@ -11,7 +11,11 @@
 </head>
 <body>
     <div>
-        <h1>Your car will be coming for you soon xD </h1>
+        @using (Html.BeginForm("","",FormMethod.Post))
+        {
+            <h1>Your car will be coming for you soon xD </h1>
+        }
+        
     </div>
 </body>
 

@@ -12,8 +12,6 @@
 
     @using (Html.BeginForm("Booking", "Booking", FormMethod.Post))
     {
-        //@Html.HiddenFor(m => m.StartLocation, htmlAttributes: new { id = "origin-inputHidden" })
-        //@Html.HiddenFor(m => m.StartLocation, htmlAttributes: new { id = "destination-inputHidden" })
         @Html.HiddenFor(m => m.PaymentAmount, htmlAttributes: new { id = "PaymentAmountHidden" })
 
         <input id="origin-input"
@@ -28,6 +26,8 @@
         //test
         @Html.TextBoxFor(m => m.StartLocation, htmlAttributes: new { id = "origin-inputHidden" })
         @Html.TextBoxFor(m => m.EndLocation, htmlAttributes: new { id = "destination-inputHidden" })
+        <label>Det vil tag billen:</label>
+        <input type="text" id="Estimated time" value="" readonly="readonly" />
 
         <input type="submit" value="submit" />
 
@@ -187,8 +187,8 @@
                         distanceKMeter = response.routes[0].legs[0].distance.value / 1000;
                         console.log(distanceKMeter);
                         document.getElementById("PaymentAmountHidden").value = Math.ceil(distanceKMeter + 50);
-                        console.log(document.getElementById("PaymentAmountHidden").value);
-                        console.log(originInputHidden.value);
+                        console.log(response.routes[0].legs[0].duration.text);
+                        document.getElementById("Estimated time").value = response.routes[0].legs[0].duration.text;
                         me.directionsRenderer.setDirections(response);
                     } else {
                         window.alert("Directions request failed due to " + status);
