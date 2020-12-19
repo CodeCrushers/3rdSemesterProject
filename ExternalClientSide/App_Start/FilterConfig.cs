@@ -1,12 +1,9 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace Google_api_test
-{
-    public class FilterConfig
-    {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
-        {
+namespace ExternalClientSide {
+    public class FilterConfig {
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters) {
             filters.Add(new HandleErrorAttribute());
         }
     }

@@ -4,79 +4,140 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 
 namespace RESTServices.Database {
-    public class AccountDB : ICRUD<Account> {
+    public class AccountDB {
 
-        private string _connectionString = ConfigurationManager.ConnectionStrings["HildurConnection"].ConnectionString;
+        private static string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-        public void Create(Account entity) {
-            using(SqlConnection con = new SqlConnection(_connectionString)) {
+        public object Create(Account entity) {
+            object o = null;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
-                using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "INSERT INTO Accounts (name, email, phonenumber) VALUES (@name, @email, @phonenumber)";
-                    cmd.Parameters.AddWithValue("name", entity.Name);
-                    cmd.Parameters.AddWithValue("email", entity.Email);
-                    cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                    cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "INSERT INTO Account (id, name, email, phonenumber) OUTPUT INSERTED.id VALUES (@id, @name, @email, @phonenumber)";
+                        cmd.Parameters.AddWithValue("id", entity.Id);
+                        cmd.Parameters.AddWithValue("name", entity.Name);
+                        cmd.Parameters.AddWithValue("email", entity.Email);
+                        cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        o = cmd.ExecuteScalar();
+                    } catch (Exception e) {
+                        throw e;
+                    }
                 }
             }
+            return o;
         }
 
-        public void Delete(int id) {
-            using(SqlConnection con = new SqlConnection(_connectionString)) {
-                con.Open();
-                using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "DELETE FROM Accounts WHERE id = @id";
-                    cmd.Parameters.AddWithValue("id", id);
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public Account Get(int id) {
+        public Account GetAccountById(object var) {
             Account account = null;
-            using(SqlConnection con = new SqlConnection(_connectionString)) {
-                con.Open();
-                using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "SELECT * FROM Accounts WHERE id = @id";
-                    cmd.Parameters.AddWithValue("id", id);
-                    var reader = cmd.ExecuteReader();
-                    account = CreateObject(reader, true);
+            if (var is string) {
+                string value = (string)var;
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "SELECT * FROM Account WHERE id = @value";
+                            cmd.Parameters.AddWithValue("value", value);
+                            var reader = cmd.ExecuteReader();
+                            account = CreateObject(reader, true);
+                        } catch (Exception e) {
+                            throw e;
+                        }
+                    }
+                } 
+            }
+            return account;
+        }
+
+        public Account GetAccountByEmail(object var) {
+            Account account = null;
+            if (var is string) {
+                string value = (string)var;
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "SELECT * FROM Account WHERE email = @value";
+                            cmd.Parameters.AddWithValue("value", value);
+                            var reader = cmd.ExecuteReader();
+                            account = CreateObject(reader, true);
+                        } catch (Exception e) {
+                            throw e;
+                        }
+                    }
                 }
             }
             return account;
         }
 
         public IEnumerable<Account> GetAll() {
-            IEnumerable<Account> accounts;
+            IEnumerable<Account> accounts = null;
             using (SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
                 using (SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "SELECT id, name, email, phonenumber FROM Accounts";
-                    var reader = cmd.ExecuteReader();
-                    accounts = CreateList(reader);
+                    try {
+                        cmd.CommandText = "SELECT * FROM Account";
+                        var reader = cmd.ExecuteReader();
+                        accounts = CreateList(reader);
+                    } catch (Exception e) {
+                        throw e;
+                    }
                 }
             }
             return accounts;
         }
 
-        public void Update(Account entity) {
-            using(SqlConnection con = new SqlConnection(_connectionString)) {
+        public bool Update(Account entity) {
+            bool result = true;
+            using (SqlConnection con = new SqlConnection(_connectionString)) {
                 con.Open();
-                using(SqlCommand cmd = con.CreateCommand()) {
-                    cmd.CommandText = "UPDATE Accounts SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
-                    cmd.Parameters.AddWithValue("id", entity.Id);
-                    cmd.Parameters.AddWithValue("name", entity.Name);
-                    cmd.Parameters.AddWithValue("email", entity.Email);
-                    cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
-                    cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = con.CreateCommand()) {
+                    try {
+                        cmd.CommandText = "UPDATE Account SET name = @name, email = @email, phonenumber = @phonenumber WHERE id = @id";
+                        cmd.Parameters.AddWithValue("id", entity.Id);
+                        cmd.Parameters.AddWithValue("name", entity.Name);
+                        cmd.Parameters.AddWithValue("email", entity.Email);
+                        cmd.Parameters.AddWithValue("phonenumber", entity.Phone);
+                        cmd.ExecuteNonQuery();
+                    } catch (Exception e) {
+                        result = false;
+                        throw e;
+                    }
                 }
             }
+            return result;
         }
 
-        public IEnumerable<Account> CreateList(SqlDataReader reader) {
+        public object Delete(object var) {
+            object o = null;
+            if (var is string) {
+                using (SqlConnection con = new SqlConnection(_connectionString)) {
+                    con.Open();
+                    using (SqlCommand cmd = con.CreateCommand()) {
+                        try {
+                            cmd.CommandText = "DELETE FROM Account OUTPUT DELETED.id WHERE id = @id";
+                            cmd.Parameters.AddWithValue("id", var);
+                            o = cmd.ExecuteScalar();
+                        } catch (Exception e) {
+                            o = false;
+                            throw e;
+                        }
+                    }
+                }
+            } else {
+                o = false;
+            }
+            return o;
+        }
+
+        /*
+         * These methods below are here to create objects of type of this DB class
+         */
+        public static IEnumerable<Account> CreateList(SqlDataReader reader) {
             List<Account> accounts = new List<Account>();
             while(reader.Read()) {
                 Account a = CreateObject(reader, false);
@@ -85,15 +146,15 @@ namespace RESTServices.Database {
             return accounts;
         }
 
-        public Account CreateObject(SqlDataReader reader, bool singleRead) {
+        public static Account CreateObject(SqlDataReader reader, bool singleRead) {
             if(singleRead) {
                 reader.Read();
             }
             Account a = new Account() {
-                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                Id = reader.GetString(reader.GetOrdinal("id")),
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Email = reader.GetString(reader.GetOrdinal("email")),
-                Phone = reader.GetString(reader.GetOrdinal("phonenumber"))
+                Phone = reader.GetString(reader.GetOrdinal("phonenumber")),
             };
             return a;
         }
