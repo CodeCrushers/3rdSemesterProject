@@ -83,9 +83,9 @@ namespace InternalClientSide.Gui {
                 CurrentNameInput.AppendText(account.Name);
                 CurrentEmailInput.AppendText(account.Email);
                 CurrentPhoneInput.AppendText(account.Phone);
+                List<Booking> bookings = GetBookings(account.Id);
+                AccountBookings.DataContext = bookings;
             }
-            List<Booking> bookings = GetBookings(account.Id);
-            AccountBookings.DataContext = bookings;
             
 
             //Console.WriteLine(response.Result.Content.ReadAsAsync<IEnumrable<Account>>);
