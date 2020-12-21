@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using ExternalClientSide.Models;
 using ExternalClientSide.BusinessLayer;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace ExternalClientSide.Controllers
 {
@@ -20,25 +21,36 @@ namespace ExternalClientSide.Controllers
         [HttpPost]
         public async Task<ActionResult> Booking(Booking bookingInput)
         {
-            if(ModelState.IsValid)
+            string redirectController;
+            string redirectAction;
+
+            if (ModelState.IsValid)
             {
                 var booking = new Booking { StartLocation = bookingInput.StartLocation, EndLocation = bookingInput.EndLocation, PayedFor = true, BookingDate = DateTime.Now, PaymentAmount = bookingInput.PaymentAmount};
-                if (await BookingBController.CreateBooking(booking) == true)
+                HttpStatusCode HttpStatusCode = await BookingBController.CreateBooking(booking);
+
+                switch(HttpStatusCode)
                 {
-                    return RedirectToAction("BookingSucces", "Booking");
+                    case HttpStatusCode.Created:
+                        return RedirectToAction("BookingSucces", "Booking");
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        return RedirectToAction("BookingFail", "Booking");
+                        break;
                 }
-                    return RedirectToAction("Login", "Account");
-                
-
-
             }
-            return RedirectToAction("Login", "Account");
-
-            
+            return RedirectToAction("BookingFail", "Booking");
         }
 
         public ActionResult BookingSucces()
         {
+            return View();
+        }
+
+        public ActionResult BookingFail()
+        {
+
             return View();
         }
     }

@@ -1,0 +1,27 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>BookingFail</title>
+</head>
+<body>
+    <div>
+        
+        @using (Html.BeginForm("Login", "Account", FormMethod.Get))
+        {
+            <h1>Der ser ud til at være sket en fejl</h1>
+            @Html.LabelFor<>
+
+            <input type="submit" value="Gå tilbage til login siden"/>
+        }
+
+    </div>
+</body>
+
+</html>

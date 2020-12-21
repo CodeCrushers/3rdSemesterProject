@@ -18,9 +18,9 @@ namespace ExternalClientSide.BusinessLayer
     public class BookingBusinesController
     {
         string baseURL = "https://localhost:44346/";
-        public async Task<Boolean> CreateBooking(Booking booking)
+        public async Task<HttpStatusCode> CreateBooking(Booking booking)
         {
-            Boolean bookingCreated = false;
+            HttpStatusCode BookingStatusCode = new HttpStatusCode();
             Account account = new Account();
             Car car = new Car();
             //getting Account
@@ -58,7 +58,6 @@ namespace ExternalClientSide.BusinessLayer
 
                     car = JsonConvert.DeserializeObject<Car>(CarResponse);
                 }
-
             }
             booking.BookingCar = car;
 
@@ -70,17 +69,10 @@ namespace ExternalClientSide.BusinessLayer
                 var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = client.PostAsync("api/Booking", stringContent).Result;
 
-                if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
-                {
-                    bookingCreated = true;
-                }
-                else
-                {
-                    bookingCreated = false;
-                }
+                BookingStatusCode = response.StatusCode;
                 
             }
-            return bookingCreated;
+            return BookingStatusCode;
         }
 
     }
